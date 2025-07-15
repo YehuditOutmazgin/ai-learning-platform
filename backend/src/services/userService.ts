@@ -1,14 +1,16 @@
 import User from '../models/User';
+import { AppError } from '../utils/AppError';
 
 export const createUser = async (name: string, phone: string) => {
-  const existing = await User.findOne({ phone });
+      if (!name || !phone) {
+       throw new AppError( 'Name and phone are required' ,410);
+    }
+    const existing = await User.findOne({ phone });
   if (existing) {
-    throw new Error('Phone number already exists');
+    throw new AppError('Phone number already exists', 409);
   }
-
   const newUser = await User.create({ name, phone });
   return newUser;
-
 };
 
 export const getAllUsers = async () => {

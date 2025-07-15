@@ -1,25 +1,22 @@
-import { Request, Response } from 'express';
+import { Request, Response, NextFunction } from 'express';
 import * as userService from '../services/userService';
+import { successResponse } from '../utils/apiResponse';
 
-export const createUser = async (req: Request, res: Response) => {
+export const createUser = async (req: Request, res: Response, next: NextFunction) => {
   try {
     const { name, phone } = req.body;
-
-    if (!name || !phone) {
-      return res.status(400).json({ message: 'Name and phone are required' });
-    }
-    const newUser = await userService.createUser(name, phone)
-    return res.status(201).json(newUser);
-  } catch (error: any) {
-    res.status(400).json({ message: error.message });
+    const user = await userService.createUser(name, phone);
+    res.status(201).json(successResponse('User created successfully', user));
+  } catch (error) {
+    next(error);
   }
 };
 
-export const getUsers = async (_req: Request, res: Response) => {
+export const getUsers = async (_req: Request, res: Response, next: NextFunction) => {
   try {
     const users = await userService.getAllUsers();
-    return res.json(users);
-  } catch (error: any) {
-    res.status(500).json({ message: error.message });
+    res.status(200).json(successResponse('All users fetched successfully', users));
+  } catch (error) {
+    next(error);
   }
 };

@@ -1,94 +1,132 @@
-<!-- # AI Learning Platform - Backend (Node.js + TypeScript + MongoDB)
+# AI Learning Platform - Backend
 
-This is the backend for a mini learning platform. It allows users to:
-- Register
-- Select categories and subcategories
-- Send prompts to an AI (mocked)
-- View their learning history
+This is the Node.js + TypeScript + MongoDB backend for an AI-driven learning platform.
 
 ---
 
-## 🚀 Technologies Used
+## Features
 
-- Node.js
+- Category & Sub-Category selection
+- AI-generated lessons (via OpenAI or Gemini)
+- Prompt history per user
+- User registration with phone
+- JWT-based authentication
+- Role-based authorization (ADMIN / USER)
+- Input validation with express-validator
+- Configurable via `.env`
+- Clean architecture (controllers, services, models, middlewares)
+
+---
+
+## Project Structure
+<pre>
+backend/
+├── src/
+│   ├── controllers/
+│   ├── services/
+│   ├── models/
+│   ├── routes/
+│   ├── validators/
+│   ├── middleware/
+│   ├── config/
+│   └── utils/
+├── .env.example
+├── package.json
+└── tsconfig.json
+</pre>
+---
+
+## Technologies
+
+- Node.js + Express
 - TypeScript
-- Express
-- MongoDB (with Mongoose)
-- dotenv
-- ts-node-dev
+- MongoDB + Mongoose
+- OpenAI or Google Gemini
+- JWT Authentication
+- Express-validator
 
 ---
 
-## 📂 Project Structure
-src/
-├── config/
-├── controllers/
-├── models/
-├── routes/
-├── seed/
-└── index.ts
+## Authentication & Authorization
+
+- All users are registered as USER by default.
+- A single ADMIN is defined via .env:
+
+  ADMIN_USERNAME=admin
+  ADMIN_PASSWORD=secret123
+
+- Login returns a JWT token.
+- Use the token in Authorization: Bearer <token> header.
 
 ---
 
-## 📦 Setup Instructions
+## API Endpoints
 
-### 1. Clone the repository
-```bash
-git clone https://github.com/your-username/ai-learning-platform.git
-cd ai-learning-platform/backend
+| Method | Endpoint                              | Description                            | Auth        |
+|--------|---------------------------------------|----------------------------------------|-------------|
+| POST   | /api/users                            | Register user (name, phone)            |  No auth  |
+| GET    | /api/users                            | List all users                         |  ADMIN     |
+| POST   | /api/auth/login                       | Login as admin                         |  No auth  |
+| GET    | /api/categories                       | Get all categories                     |  No auth  |
+| GET    | /api/categories/:id/subcategories     | Get subcategories by category          |  No auth  |
+| POST   | /api/prompts                          | Submit new prompt                      |  USER      |
+| GET    | /api/prompts/:userId                  | Get user’s prompt history              |  USER      |
 
-### 2. Install dependencies
-bash
-Copy code
-npm install
+---
 
-### 3. Create .env file
-Create a .env file at the root:
+## Environment Variables
 
-PORT=5000
-MONGODB_URI=mongodb://localhost:27017/ai_learning
-OPENAI_API_KEY=your_api_key_here
-You can also use .env.example as reference.
+Create a `.env` file based on the following structure:
+<pre>
+PORT=5000  
+MONGODB_URI=mongodb://localhost:27017/ai_learning  
+OPENAI_API_KEY=your_openai_key  
+GEMINI_API_KEY=your_gemini_key  
+JWT_SECRET=your_jwt_secret  
+ADMIN_USERNAME=admin  
+ADMIN_PASSWORD=secret123
+</pre>
+---
 
-### 4. Seed Categories (Optional)
-bash
-Copy code
-npx ts-node src/seed/seedCategories.ts
-### 5. Start Development Server
-npm run dev
-Server will start on http://localhost:5000.
+## Run Locally
 
-📡 API Endpoints Summary
-Method	Endpoint	Description
-POST	/api/users	Create new user
-GET	/api/users	Get all users
-GET	/api/categories	Get all categories
-GET	/api/categories/:id/subcategories	Get subcategories by category
-POST	/api/prompts	Submit prompt and get mock response
-GET	/api/prompts/:userId	Get user’s learning history
+1. Clone the project and enter the backend directory:
+   ```cd backend```
 
-🧪 Mock AI
-This version uses a mock AI response like:
+2. Install dependencies:
+   ```npm install```
 
-📘 This is a mock lesson about: "Your prompt here"
+3. Start the server:
+   ```npm run dev```
 
-To integrate with OpenAI, you can update the promptController.ts and add real API calls.
+Make sure MongoDB is running locally on port 27017.
 
-📦 Scripts
-json
-Copy code
-"scripts": {
-  "dev": "ts-node-dev --respawn --transpile-only src/index.ts"
+---
+
+## Sample Login Request
+
+POST /api/auth/login  
+Content-Type: application/json
+<pre>
+{
+  "username": "admin",
+  "password": "secret123"
 }
-📁 .gitignore
-gitignore
-Copy code
-/node_modules
-/dist
-.env
-.env.*
-*.log
-✍️ Author
-Created as part of a full-stack practical assignment.
-Contact: [your-email@example.com]
- -->
+</pre>
+Response:
+<pre>
+{
+  "success": true,
+  "message": "Login successful",
+  "data": {
+    "token": "eyJhbGciOiJIUzI1..."
+  }
+}
+</pre>
+---
+
+## License
+
+This project is part of a technical evaluation. Not for commercial use.
+
+

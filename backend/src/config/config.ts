@@ -31,9 +31,9 @@ const getConfig = (): Config => {
   if (!openaiApiKey) {
     throw new Error('Missing OPENAI_API_KEY in .env');
   }
-  const openai = new OpenAI({
-    apiKey: process.env.OPENAI_API_KEY,
-  });
+const openai = new OpenAI({
+  apiKey: process.env.OPENAI_API_KEY || '',
+});
     if (!adminPassword|| !adminUsername) {
     throw new Error('Missing Admin values in .env');
   }

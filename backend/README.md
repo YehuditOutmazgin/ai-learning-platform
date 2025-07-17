@@ -22,15 +22,15 @@ This is the Node.js + TypeScript + MongoDB backend for an AI-driven learning pla
 <pre>
 backend/
 ├── src/
-│   ├── controllers/
-│   ├── services/
-│   ├── models/
-│   ├── routes/
-│   ├── validators/
-│   ├── middleware/
-│   ├── config/
-│   └── utils/
-├── .env.example
+│   ├── controllers/ authController.ts, categoryController.ts,promptController.ts,userController.ts
+│   ├── services/ validationService.ts, categoryService.ts,promptService.ts,userService.ts
+│   ├── models/ Category.ts, Prompt.ts ,SubCategories.ts , User.ts
+│   ├── routes/ categoryRoutes.ts,promptRoutes.ts,userRoutes.ts
+│   ├── validators/ promptValidator.ts, userValidator.ts
+│   ├── middlewares/ authMiddleWare.ts, erroHendler.ts , roleMiddleware.ts , validateRequest.ts
+│   ├── config/ config.ts, db.ts
+│   └── utils/ apiResponse.ts , AppError.ts , jwt.ts
+├── .env
 ├── package.json
 └── tsconfig.json
 </pre>

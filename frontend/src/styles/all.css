@@ -1,0 +1,28 @@
+html {
+    margin: 0;
+    padding: 0;
+    color: white;
+    font-family: "Varela Round", "Comic Sans MS";
+    width: 100%;
+    height: 100%;
+    width: 100%;
+    height: 100%;
+    background-color: rgb(63, 62, 60);
+    background-position: top;
+    top: 0;
+    left: 0;
+    text-align: right;
+}
+
+
+::selection {
+    background-color: rgb(142, 204, 181);
+}
+
+.notCorrect {
+    color: rgb(10, 185, 185);
+}
+.error{
+    color: red;
+    background-color: antiquewhite;
+}

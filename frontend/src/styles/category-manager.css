@@ -1,0 +1,45 @@
+/* category-manager.css */
+
+.category-manager {
+  padding: 10px;
+  background-color: rgba(255, 255, 255, 0.04);
+  border-radius: 12px;
+  color: white;
+  font-family: "Varela Round", sans-serif;
+}
+
+.category-manager input[type="text"] {
+  width: 100%;
+  padding: 6px 10px;
+  margin-bottom: 12px;
+  background-color: transparent;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  color: white;
+}
+
+.category-manager ul {
+  list-style: none;
+  padding-right: 0;
+}
+
+.category-manager li {
+  margin-bottom: 10px;
+  padding: 6px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.category-manager li strong {
+  font-size: 14pt;
+  color: rgb(102, 255, 255);
+}
+
+.category-manager li ul {
+  margin-top: 6px;
+  padding-right: 10px;
+}
+
+.category-manager li ul li {
+  font-size: 13px;
+  color: #ccc;
+}

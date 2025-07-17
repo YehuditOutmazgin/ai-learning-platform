@@ -1,0 +1,47 @@
+.admin-dashboard {
+  padding: 20px;
+  color: white;
+}
+
+.admin-header {
+  font-size: 24pt;
+  font-weight: bold;
+  margin-bottom: 20px;
+}
+
+.admin-content {
+  display: flex;
+  gap: 20px;
+}
+
+.admin-sidebar,
+.admin-middle,
+.admin-right {
+  background-color: rgba(255,255,255,0.05);
+  padding: 10px;
+  border-radius: 12px;
+  width: 100%;
+  max-height: 80vh;
+  overflow-y: auto;
+}
+
+.admin-sidebar {
+  max-width: 200px;
+}
+
+.admin-middle {
+  max-width: 250px;
+}
+
+.admin-view {
+  margin-bottom: 20px;
+}
+
+input[type="text"] {
+  width: 100%;
+  padding: 5px;
+  margin-bottom: 10px;
+  background-color: transparent;
+  border: 1px solid #ccc;
+  color: white;
+}

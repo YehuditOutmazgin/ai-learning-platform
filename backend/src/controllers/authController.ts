@@ -7,32 +7,27 @@ import config from '../config/config';
 // התחברות של משתמש רגיל לפי phone
 export const loginUser = async (req: Request, res: Response, next: NextFunction) => {
   try {
-    const { phone } = req.body;
-    const user = await User.findOne({ phone });
-    if (!user) throw new AppError('User not found', 404);
-
-    const token = generateToken(user._id.toString(), 'user'); // 👈 תמיד role = user
-    res.json({ success: true, message: 'User login successful', data: { token } });
-  } catch (error) {
-    next(error);
-  }
-};
-
-// התחברות של אדמין לפי שם משתמש וסיסמה מה־.env
-export const loginAdmin = async (req: Request, res: Response, next: NextFunction) => {
-  try {
-    const { username, password } = req.body;
-
+    const { name, phone } = req.body;
+    //check if admin
     if (
-      username !== config.adminUsername ||
-      password !== config.adminPassword
+      name == config.adminUsername &&
+      phone == config.adminPassword
     ) {
-      throw new AppError('Invalid admin credentials', 401);
+      const token = generateToken('admin_static_id', 'admin','admin');
+      res.json({ success: true, message: 'Admin login successful', data: { token } });
     }
-
-    const token = generateToken('admin_static_id', 'admin'); // 👈 משתמש קבוע
-    res.json({ success: true, message: 'Admin login successful', data: { token } });
+    // check if user
+    else {
+      const user = await User.findOne({ name, phone });
+      if (!user) throw new AppError('User not found', 404);
+      const userId = user._id;
+      const token = generateToken(user._id.toString(),user.name, 'user');
+      console.log("token")
+      res.json({ success: true, message: 'User login successful', data: { token, userId } });
+    }
   } catch (error) {
     next(error);
   }
 };
+
+

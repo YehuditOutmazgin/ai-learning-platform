@@ -1,73 +1,4 @@
-// import Prompt from '../models/Prompt';
-// import User from '../models/User';
-// import Category from '../models/Category';
-// import SubCategory from '../models/SubCategory';
-// import { AppError } from '../utils/AppError';
-// import config from '../config/config';
-// export const createPrompt = async (
-//     userId: string,
-//     categoryId: string,
-//     subCategoryId: string,
-//     promptText: string
-// ) => {
-
-//     if (!userId || !categoryId || !subCategoryId || !promptText)
-//         throw new AppError('Missing required fields');
-
-//     const user = await User.findById(userId);
-//     if (!user) throw new AppError('User not found', 400);
-
-//     const category = await Category.findById(categoryId);
-//     if (!category) throw new AppError('Category not found', 401);
-
-//     const subCategory = await SubCategory.findOne({ _id: subCategoryId, categoryId });
-//     if (!subCategory) {
-//         throw new AppError('Sub-category does not match the category or does not exist', 402);
-//     }
-
-//     // // mock
-//     // const response = `📘 This is a mock lesson about: "${promptText}"`;
-
-//     //ai
-//     const systemMessage = `You are a helpful educational assistant. 
-//     Your only role is to teach and explain topics in the field of "${category?.name}"${subCategory?.name ? ` 
-//         and specifically in "${subCategory.name}"` : ''}. Please give a clear and structured explanation for 
-//         students. Do not respond to anything outside this domain.`;
-//     const response = await config.openAI.chat.completions.create({
-//         model: 'gpt-3.5-turbo',
-//         messages: [
-//             { role: 'system', content: systemMessage },
-//             { role: 'user', content: promptText },
-//         ],
-//         temperature: 0.7,
-//         max_tokens: 600,
-//     });
-
-//     const aiResponse = response.choices[0]?.message.content?.trim();
-//     if (!aiResponse) throw new AppError('No response from OpenAI');
-//     //end of ai
-
-//     const newPrompt = await Prompt.create({
-//         userId,
-//         categoryId,
-//         subCategoryId,
-//         prompt: promptText,
-//         response,
-//     });
-//     return newPrompt;
-// };
-
-// export const getUserPrompts = async (userId: string) => {
-//     try {
-//         const prompts = await Prompt.find({ userId })
-//             .populate('categoryId', 'name')
-//             .populate('subCategoryId', 'name');
-//         return prompts;
-//     } catch (err) {
-//         throw new AppError('Server error', 450);
-//     }
-// };
-
+import mongoose from 'mongoose';
 import Prompt from '../models/Prompt';
 import User from '../models/User';
 import Category from '../models/Category';
@@ -81,47 +12,84 @@ export const createPrompt = async (
     subCategoryId: string,
     promptText: string
 ) => {
-    if (!userId || !categoryId || !subCategoryId || !promptText)
-        throw new AppError('Missing required fields');
+    try {
+        if (!userId || !categoryId || !subCategoryId || !promptText)
+            throw new AppError('Missing required fields', 400);
 
-    const user = await User.findById(userId);
-    if (!user) throw new AppError('User not found', 400);
+        if (
+            !mongoose.isValidObjectId(userId) ||
+            !mongoose.isValidObjectId(categoryId) ||
+            !mongoose.isValidObjectId(subCategoryId)
+        ) {
+            throw new AppError('One or more IDs are invalid', 400);
+        }
 
-    const category = await Category.findById(categoryId);
-    if (!category) throw new AppError('Category not found', 401);
+        const trimmedPrompt = promptText.trim();
+        if (!trimmedPrompt) throw new AppError('Prompt text cannot be empty', 400);
+        if (trimmedPrompt.length > 500) {
+            throw new AppError('Prompt is too long. Max 500 characters allowed.', 400);
+        }
 
-    const subCategory = await SubCategory.findOne({ _id: subCategoryId, categoryId });
-    if (!subCategory) {
-        throw new AppError('Sub-category does not match the category or does not exist', 402);
+        const user = await User.findById(userId);
+        if (!user) throw new AppError('User not found', 404);
+
+        const category = await Category.findById(categoryId);
+        if (!category) throw new AppError('Category not found', 404);
+
+        const subCategory = await SubCategory.findOne({ _id: subCategoryId, categoryId });
+        if (!subCategory) {
+            throw new AppError('Sub-category does not match the category or does not exist', 400);
+        }
+
+        const aiResponse = await openAiGenerate(trimmedPrompt, category.name, subCategory.name);
+
+        const newPrompt = await Prompt.create({
+            userId,
+            categoryId,
+            subCategoryId,
+            prompt: trimmedPrompt,
+            response: aiResponse,
+        });
+
+        return newPrompt;
+    } catch (err) {
+        console.error('Error in createPrompt:', err);
+        if (err instanceof AppError) throw err;
+        throw new AppError('Failed to create prompt', 500);
     }
-
-    // const aiResponse = await mockGenerate(promptText, category.name, subCategory.name);
-    // const aiResponse = await geminiGenerate(promptText, category.name, subCategory.name);
-    const aiResponse = await openAiGenerate(promptText, category.name, subCategory.name);
-
-    const newPrompt = await Prompt.create({
-        userId,
-        categoryId,
-        subCategoryId,
-        prompt: promptText,
-        response: aiResponse,
-    });
-
-    return newPrompt;
 };
 
 export const getUserPrompts = async (userId: string) => {
     try {
+        if (!mongoose.isValidObjectId(userId)) {
+            throw new AppError('Invalid user ID', 400);
+        }
+
         const prompts = await Prompt.find({ userId })
             .populate('categoryId', 'name')
             .populate('subCategoryId', 'name');
         return prompts;
     } catch (err) {
-        throw new AppError('Server error', 450);
+        console.error('Error in getUserPrompts:', err);
+        if (err instanceof AppError) throw err;
+        throw new AppError('Server error', 500);
     }
 };
 
-//  MOCK (לצורכי פיתוח)
+export const getAllUsersPrompts = async () => {
+    try {
+        const prompts = await Prompt.find()
+            .populate('categoryId', 'name')
+            .populate('subCategoryId', 'name');
+        return prompts;
+    } catch (err) {
+        console.error('Error in getAllUsersPrompts:', err);
+        if (err instanceof AppError) throw err;
+        throw new AppError('Server error', 500);
+    }
+};
+
+// MOCK generator (for dev/testing)
 export const mockGenerate = async (
     promptText: string,
     categoryName: string,
@@ -130,13 +98,18 @@ export const mockGenerate = async (
     return ` This is a mock lesson about "${promptText}" in the category "${categoryName}"${subCategoryName ? ` and sub-category "${subCategoryName}"` : ''}.`;
 };
 
-//  OpenAI API
+// OpenAI API generator
 export const openAiGenerate = async (
     promptText: string,
     categoryName: string,
     subCategoryName?: string
 ): Promise<string> => {
-    const systemMessage = `You are a helpful educational assistant. Your only role is to teach and explain topics in the field of "${categoryName}"${subCategoryName ? ` and specifically in "${subCategoryName}"` : ''}. Please give a clear and structured explanation for students. Do not respond to anything outside this domain.`;
+    const systemMessage = `You are a friendly and professional educational assistant. Your job is to clearly and thoroughly explain topics in the category of "${categoryName}"${subCategoryName ? `, specifically in "${subCategoryName}"` : ''}.
+Always assume that the student's question is relevant to this topic unless it's clearly unrelated. Do not reject valid questions.
+
+Provide a complete, clear, structured explanation with easy-to-understand language for beginner students. The answer should be detailed and span around 12–15 lines. Use short paragraphs or bullet points if needed. 
+
+If, and only if, the question is completely outside the scope of this topic, respond politely that the assistant supports only questions related to this category and recommend choosing a different topic.`;
 
     const response = await config.openAI.chat.completions.create({
         model: 'gpt-3.5-turbo',
@@ -144,32 +117,123 @@ export const openAiGenerate = async (
             { role: 'system', content: systemMessage },
             { role: 'user', content: promptText },
         ],
-        temperature: 0.7,
+        temperature: 0.65,
         max_tokens: 600,
     });
 
     const aiResponse = response.choices[0]?.message.content?.trim();
-    if (!aiResponse) throw new AppError('No response from OpenAI');
+
+    if (!aiResponse) {
+        return `מצטער, לא הצלחתי לנסח תשובה מתאימה לשאלתך. נסה לנסח מחדש או לבחור נושא אחר.`;
+    }
+
     return aiResponse;
 };
 
-//  Gemini API (Google)
-export const geminiGenerate = async (
-    promptText: string,
-    categoryName: string,
-    subCategoryName?: string
-): Promise<string> => {
-    const instruction = `You are a helpful educational assistant. You only teach topics in "${categoryName}"${subCategoryName ? `, specifically "${subCategoryName}"` : ''}. Answer clearly and only about this topic.`;
 
-    const model = config.geminiAI.getGenerativeModel({ model: 'gemini-pro' });
 
-    const result = await model.generateContent({ contents:
-        [{  role: 'user',
-            parts: 
-            [{ text: `${instruction}\n\n${promptText}` }]
-        }]});
 
-    const aiResponse = result.response.text().trim();
-    if (!aiResponse) throw new AppError('No response from Gemini AI');
-    return aiResponse;
-};
+
+
+// import Prompt from '../models/Prompt';
+// import User from '../models/User';
+// import Category from '../models/Category';
+// import SubCategory from '../models/SubCategory';
+// import { AppError } from '../utils/AppError';
+// import config from '../config/config';
+
+// export const createPrompt = async (
+//     userId: string,
+//     categoryId: string,
+//     subCategoryId: string,
+//     promptText: string
+// ) => {
+//     if (!userId || !categoryId || !subCategoryId || !promptText)
+//         throw new AppError('Missing required fields');
+
+//     const user = await User.findById(userId);
+//     if (!user) throw new AppError('User not found', 404);
+
+//     const category = await Category.findById(categoryId);
+//     if (!category) throw new AppError('Category not found', 404);
+
+//     const subCategory = await SubCategory.findOne({ _id: subCategoryId, categoryId });
+//     if (!subCategory) {
+//         throw new AppError('Sub-category does not match the category or does not exist', 400);
+//     }
+
+//     // const aiResponse = await mockGenerate(promptText, category.name, subCategory.name);
+//     const aiResponse = await openAiGenerate(promptText, category.name, subCategory.name);
+
+//     const newPrompt = await Prompt.create({
+//         userId,
+//         categoryId,
+//         subCategoryId,
+//         prompt: promptText,
+//         response: aiResponse,
+//     });
+
+//     return newPrompt;
+// };
+
+// export const getUserPrompts = async (userId: string) => {
+//     try {
+//         const prompts = await Prompt.find({ userId })
+//             .populate('categoryId', 'name')
+//             .populate('subCategoryId', 'name');
+//         return prompts;
+//     } catch (err) {
+//         throw new AppError('Server error', 450);
+//     }
+// };
+// export const getAllUsersPrompts = async () => {
+//     try {
+//         const prompts = await Prompt.find()
+//             .populate('categoryId', 'name')
+//             .populate('subCategoryId', 'name');
+//         return prompts;
+//     } catch (err) {
+//         throw new AppError('Server error', 450);
+//     }
+// };
+// //  MOCK
+// export const mockGenerate = async (
+//     promptText: string,
+//     categoryName: string,
+//     subCategoryName?: string
+// ): Promise<string> => {
+//     return ` This is a mock lesson about "${promptText}" in the category "${categoryName}"${subCategoryName ? ` and sub-category "${subCategoryName}"` : ''}.`;
+// };
+
+// //  OpenAI API
+// export const openAiGenerate = async (
+//   promptText: string,
+//   categoryName: string,
+//   subCategoryName?: string
+// ): Promise<string> => {
+//   const systemMessage = `You are a friendly and professional educational assistant. Your job is to clearly and thoroughly explain topics in the category of "${categoryName}"${subCategoryName ? `, specifically in "${subCategoryName}"` : ''}.
+// Always assume that the student's question is relevant to this topic unless it's clearly unrelated. Do not reject valid questions.
+
+// Provide a complete, clear, structured explanation with easy-to-understand language for beginner students. The answer should be detailed and span around 12–15 lines. Use short paragraphs or bullet points if needed.
+
+// If, and only if, the question is completely outside the scope of this topic, respond politely that the assistant supports only questions related to this category and recommend choosing a different topic.`;
+
+//   const response = await config.openAI.chat.completions.create({
+//     model: 'gpt-3.5-turbo',
+//     messages: [
+//       { role: 'system', content: systemMessage },
+//       { role: 'user', content: promptText },
+//     ],
+//     temperature: 0.65,
+//     max_tokens: 600,
+//   });
+
+//   const aiResponse = response.choices[0]?.message.content?.trim();
+
+//   if (!aiResponse) {
+//     return `מצטער, לא הצלחתי לנסח תשובה מתאימה לשאלתך. נסה לנסח מחדש או לבחור נושא אחר.`;
+//   }
+
+//   return aiResponse;
+// };
+

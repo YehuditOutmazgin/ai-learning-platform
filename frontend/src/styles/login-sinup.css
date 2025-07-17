@@ -1,0 +1,78 @@
+/* ---------  Form ----------- */
+#form-container {
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%);
+    width: 400px;
+    height: 500px;
+    background: linear-gradient(135deg, rgba(110, 38, 38, 0.1), rgba(255, 255, 255, 0));
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    border-radius: 20px;
+    border: 1px solid rgba(255, 255, 255, 0.18);
+    box-shadow: 0 8px 32px 0 rgba(212, 209, 209, 0.37);
+    overflow: hidden;
+    padding: 20px;
+}
+
+/* -----  Form content ------*/
+.title {
+    font-weight: 800;
+    font-size: 40pt;
+}
+
+.msg {
+    margin: 10px;
+}
+
+input {
+    background-color: transparent;
+    border: none;
+    height: 30px;
+    width: 90%;
+    border-bottom: solid 2px #fff;
+    margin: 10px;
+    font-size: 16px;
+    color: #fff;
+}
+
+a {
+    color: rgb(114, 105, 146);
+    text-decoration: none;
+}
+
+.label {
+    margin-top: 20px;
+    font-size: 15pt;
+    margin-right: 10;
+}
+.label-title{
+    margin-right: 15px;
+}
+.submit {
+    margin-top: 70px;
+    color: #fff;
+    height: 40px;
+    background: linear-gradient(135deg, rgba(255, 255, 255, 0.1), rgba(255, 255, 255, 0));
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    border-radius: 5px;
+    border: 1px solid rgba(255, 255, 255, 0.18);
+    box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
+    cursor: pointer;
+    transition: all 0.3s ease-in-out;
+}
+
+input:focus {
+    border-color: #867272;
+    outline: none;
+    font-size: 16px;
+    color: #fff;
+    font-family: "Varela Round";
+}
+
+.submit:hover {
+    background-color: rgb(255, 255, 255);
+    color: #000;
+}

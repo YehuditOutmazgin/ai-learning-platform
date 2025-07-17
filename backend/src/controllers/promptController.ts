@@ -21,5 +21,12 @@ export const getUserPrompts = async (req: Request, res: Response, next: NextFunc
   }
 };
 
-
+export const getUsersPrompts = async (req: Request, res: Response, next: NextFunction) => {
+  try {
+    const prompts = await promptService.getAllUsersPrompts();
+    res.status(200).json(successResponse('Users prompts fetched successfully', prompts));
+  } catch (error) {
+    next(error);
+  }
+};
 

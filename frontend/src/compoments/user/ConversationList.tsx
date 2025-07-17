@@ -46,6 +46,11 @@ const ConversationList = ({ onSelect }: Props) => {
                     onClick={() => onSelect(prompt)}
                 >
                     <p className="conversation-title">{prompt.prompt.slice(0, 30)}...</p>
+
+
+                    {prompt.subCategoryId.name} {"->"} {prompt.categoryId.name}
+                    <br />
+                    {prompt.response.slice(0, 30)}...
                     <p className="conversation-date">
                         {new Date(prompt.createdAt).toLocaleDateString()}
                     </p>

@@ -47,6 +47,7 @@ export const loginThunk = createAsyncThunk(
         thunkAPI
     ) => {
         try {
+            alert('ayy')
             const res = await loginApi(name, phone);
             const token = res.token;
             setToken(token);
@@ -56,7 +57,7 @@ export const loginThunk = createAsyncThunk(
                 role: userData?.role,
             };
         } catch (err: any) {
-            return thunkAPI.rejectWithValue("שגיאה בהתחברות");
+            return thunkAPI.rejectWithValue("שגיאה בהתחברות"+err);
         }
     }
 );
@@ -70,6 +71,7 @@ const authSlice = createSlice({
             state.role = null;
             state.isAuthenticated = false;
             state.error = null;
+
             removeToken();
         },
         clearError: (state) => {

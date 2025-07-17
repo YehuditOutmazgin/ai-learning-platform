@@ -6,23 +6,20 @@ import '../../styles/conversation-view.css';
 import '../../styles/all.css';
 import { useSelector, useDispatch } from 'react-redux';
 import { RootState, AppDispatch } from '../../redux/store';
-import { fetchCategories, fetchSubCategories } from '../../redux/slices/categorySlice';
-
+import { fetchCategoriesThunk, fetchSubCategoriesThunk } from '../../redux/slices/categorySlice';
+import { Category ,SubCategory} from '../../types/prompt';
 interface ConversationData {
     prompt: string;
     response: string;
 }
 
-interface Category {
-    _id: string;
-    name: string;
-}
 
-interface SubCategory {
-    _id: string;
-    name: string;
-    categoryId: string;
-}
+
+// interface SubCategory {
+//     _id: string;
+//     name: string;
+//     categoryId: Category;
+// }
 
 interface ConversationViewProps {
     data: ConversationData | null;
@@ -40,10 +37,12 @@ const ConversationView: React.FC<ConversationViewProps> = ({ data }) => {
     const [response, setResponse] = useState('');
     const [disabled, setDisabled] = useState(false);
     const [error, setError] = useState('');
+    const isFormValid = message.trim() !== '' && category !== '' && subcategory !== '';
+    const { loading } = useSelector((state: RootState) => state.auth)
 
     useEffect(() => {
-        dispatch(fetchCategories());
-        dispatch(fetchSubCategories());
+        dispatch(fetchCategoriesThunk());
+        dispatch(fetchSubCategoriesThunk());
     }, [dispatch]);
 
     useEffect(() => {
@@ -54,11 +53,13 @@ const ConversationView: React.FC<ConversationViewProps> = ({ data }) => {
         if (!category) {
             setFilteredSubcategories(subcategories);
         } else {
-            const filtered = subcategories.filter((sub: SubCategory) => sub.categoryId === category);
+            if(!subcategory){
+            const filtered = subcategories.filter((sub: SubCategory) => sub.categoryId._id === category);
             setFilteredSubcategories(filtered);
-
+            }
             if (subcategory) {
-                const stillValid = filtered.some((sub: SubCategory) => sub._id === subcategory);
+                const sub=subcategories.find((s:SubCategory)=>s._id===subcategory)
+                const stillValid = categories.find((cat: Category) => cat._id === sub?.categoryId._id);
                 if (!stillValid) setSubcategory('');
             }
         }
@@ -67,8 +68,8 @@ const ConversationView: React.FC<ConversationViewProps> = ({ data }) => {
     useEffect(() => {
         if (subcategory) {
             const selectedSub = subcategories.find((s) => s._id === subcategory);
-            if (selectedSub && selectedSub.categoryId !== category) {
-                setCategory(selectedSub.categoryId);
+            if (selectedSub && selectedSub.categoryId._id !== category) {
+                setCategory(selectedSub.categoryId._id);
             }
         }
     }, [subcategory, category, subcategories]);
@@ -92,15 +93,7 @@ const ConversationView: React.FC<ConversationViewProps> = ({ data }) => {
             setError('המשתמש לא מחובר');
             return;
         }
-        if (!category) {
-            alert("הכנס קטגוריה")
-            setError("הכנס קטגוריה")
-            return;
-        }
-        if (!subcategory) {
-            setError("הכנס  תת קטגוריה")
-            return;
-        }
+
         setDisabled(true);
         setResponse('');
         setError('')
@@ -120,23 +113,23 @@ const ConversationView: React.FC<ConversationViewProps> = ({ data }) => {
 
     return (
         <div className="conversation-view">
-            <h2 className="welcome">שלום, {name || 'משתמש'}</h2>
 
-            <div className="selectors">
-                <Select
-                    label="קטגוריה"
-                    value={category}
-                    onChange={onCategoryChange}
-                    options={categoryOptions}
-                />
-                <Select
-                    label="תת־קטגוריה"
-                    value={subcategory}
-                    onChange={onSubcategoryChange}
-                    options={subcategoryOptions}
-                />
+            <div className="selectors"> בחר קטגוריה ותת קטגוריה על מנת לשלוח בקשה לשיעור מה AI
+                <div className='select'>
+                    <Select
+                        label="קטגוריה"
+                        value={category}
+                        onChange={onCategoryChange}
+                        options={categoryOptions}
+                    />
+                    <Select
+                        label="תת־קטגוריה"
+                        value={subcategory}
+                        onChange={onSubcategoryChange}
+                        options={subcategoryOptions}
+                    />
+                </div>
             </div>
-
             <div className="chat-box">
                 {data && <div className="prev-message">{data.prompt} → {data.response}</div>}
                 {error && <div className='error'>{error}</div>}
@@ -147,11 +140,13 @@ const ConversationView: React.FC<ConversationViewProps> = ({ data }) => {
                 <input
                     type="text"
                     value={message}
-                    placeholder="כתוב שאלה"
+                    placeholder=" יש לבחור קטגוריה ותת קטגוריה על מנת לשלוח"
                     onChange={(e) => setMessage(e.target.value)}
                     disabled={disabled}
                 />
-                <button onClick={handleSend} disabled={disabled}>שלח</button>
+                <button onClick={handleSend} disabled={disabled || !isFormValid}>
+                    {loading ? <div className="spinner"></div> : "↑ שלח"}
+                </button>
             </div>
         </div>
     );

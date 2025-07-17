@@ -14,7 +14,7 @@ type Props = {
 
 const Select: React.FC<Props> = ({ label, value, options = [], onChange }) => (
   <div className="select-container">
-    <label className="select-label">{label}</label>
+    <label className="select-label">{"    "}{label} {"  "}</label>
     <select
       className="select-input"
       value={value}

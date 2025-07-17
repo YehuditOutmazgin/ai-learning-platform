@@ -1,72 +1,99 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect } from 'react';
 import '../../styles/login-sinup.css';
 import '../../styles/all.css';
-
 import { useNavigate } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
-import { signUpThunk } from '../../redux/slices/authSlice';
+import {  signUpThunk } from '../../redux/slices/authSlice';
 import { RootState, AppDispatch } from '../../redux/store';
+import { useForm } from 'react-hook-form';
 
-const SignUp = () => {
-  const [name, setName] = useState('');
-  const [phone, setPhone] = useState('');
+interface SignUpFormData {
+  name: string;
+  phone: string;
+}
+
+const SignUp  = () => {
   const navigate = useNavigate();
-
   const dispatch = useDispatch<AppDispatch>();
 
-  const { error, loading, isAuthenticated } = useSelector(
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+  } = useForm<SignUpFormData>();
+
+  const { isAuthenticated, role, error, loading } = useSelector(
     (state: RootState) => state.auth
   );
 
-  const handleSignup = () => {
-    dispatch(signUpThunk({ name, phone }));
-       if (!loading && !error && name && phone) {
-        alert("login")
-      navigate('/login');
+  const onSubmit = async (data: SignUpFormData) => {
+    try {
+      await dispatch(signUpThunk(data));
+    } catch (error) {
+      console.error('Signup error:', error);
     }
   };
 
-//   useEffect(() => {
- 
-//   }, [loading, error, name, phone, navigate]);
+  useEffect(() => {
+    if (isAuthenticated) {
+      navigate(role === 'admin' ? '/admin' : '/user');
+    }
+  }, [isAuthenticated, role, navigate]);
 
   return (
     <div>
-      <div id="gradient-bg">
-        <div className="gradient-container"></div>
-      </div>
       <div id="form-container">
-        <h1 className="title label-title">הרשמה</h1>
-        <div className="label">
-          <div className="label-title">שם</div>
-          <input
-            type="input"
-            value={name}
-            onChange={(e) => setName(e.target.value)}
-          />
-        </div>
-        <div className="label">
-          <div className="label-title">טלפון</div>
-          <input
-            type="input"
-            value={phone}
-            onChange={(e) => setPhone(e.target.value)}
-          />
-        </div>
-        <input
-          type="button"
-          className="submit"
-          value="להרשמה"
-          onClick={handleSignup}
-        />
-        {error && <p className="notCorrect">{error}</p>}
-        <p>
-          יש לך חשבון?{' '}
-          <span
-            style={{ color: 'lightblue', cursor: 'pointer' }}
-            onClick={() => navigate('/login')}
-          >
-            להתחברות
+        <h1 className="form-title">פלטפורמת שיעורים מה-AI</h1>
+        <div className="title label-title">רישום למערכת</div>
+
+        <form onSubmit={handleSubmit(onSubmit)} className="login-form">
+          <div className="label">
+            <label className="label-title">שם</label>
+            <input
+              type="text"
+              {...register('name', {
+                required: 'שם נדרש',
+                pattern: {
+                  value: /^[A-Za-zא-ת]{2,}$/,
+                  message: 'שם חייב להיות לפחות 2 אותיות',
+                },
+              })}
+              placeholder="הכנס שם"
+            />
+            {errors.name && (
+              <span className="notcorrect">{errors.name.message}</span>
+            )}
+          </div>
+
+          <div className="label">
+            <label className="label-title">טלפון</label>
+            <input
+              type="text"
+              {...register('phone', {
+                required: 'טלפון נדרש',
+                minLength: {
+                  value: 9,
+                  message: 'הכנס מספר טלפון תקין',
+                },
+              })}
+              placeholder="הכנס מספר טלפון"
+            />
+            {errors.phone && (
+              <span className="notcorrect">{errors.phone.message}</span>
+            )}
+          </div>
+
+          {error && <div className="notcorrect">{error}</div>}
+
+          <button type="submit" className="submit" disabled={loading}>
+            {loading ? <div className="spinner"></div> : 'הרשם '}
+          </button>
+        </form>
+
+        <p className="signup-text">
+          כבר יש לך חשבון?
+          <span className="signup-link" onClick={() => navigate('/login')}>
+            להרשמה
           </span>
         </p>
       </div>
@@ -74,4 +101,4 @@ const SignUp = () => {
   );
 };
 
-export default SignUp;
+export default SignUp ;

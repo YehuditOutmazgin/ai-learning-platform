@@ -16,13 +16,15 @@ const AppRouter = () => {
         <Route path="/login" element={<Login />} />
         <Route path="/signup" element={<SignUp />} />
         <Route
-          path="/prompt"
+          path="/user"
           element={
             user && user.role === 'user' ? <UserDashboard /> : <Navigate to="/login" />
           }
         />
-        <Route
-          path="/categories"
+        
+
+                <Route
+          path="/admin"
           element={
             user && user.role === 'admin' ? <AdminDashboard /> : <Navigate to="/login" />
           }

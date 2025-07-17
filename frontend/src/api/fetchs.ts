@@ -34,6 +34,7 @@ export const login = async (name: string, phone: string) => {
             throw new Error("didnt success")
         return res.data.data;
     } catch (e) {
+        alert(e)
         if (e instanceof Error) {
         throw new Error("error fetcing to login"+e.message)
     }
@@ -109,7 +110,7 @@ export const createPrompt = async (userId: string, categoryId: string, subCatego
 
 export const getUserPrompts = async (userId: string) => {
     try {
-        const res = await api.get(`/prompts/${userId}`); // get prompts for user
+        const res = await api.get(`/prompts/get/${userId}`); // get prompts for user
         if (await isSucceed(!res))
             throw new Error("didnt success")
         return res.data.data;
@@ -124,54 +125,10 @@ export const getAllUsersPrompts = async () => {
             throw new Error("didnt success")
         return res.data.data
     } catch (e) {
+            console.error('error fetcing to get all users propmts');
+
         throw new Error("error fetcing to get all users propmts")
     }
 }
 
 
-
-// export const signUp = (name: string, phone: string) =>
-//   api.post('/users', { name, phone });
-
-// export const fetchSubCategoriesInCategory = async (selectedCategoryId: string) => {
-//     if (!selectedCategoryId) return;
-
-//     try {
-//         const res = await api.get(`categories/${selectedCategoryId}/subcategories`);
-//         // console.log("categoryId: "+selectedCategoryId+" result: "+JSON.stringify( res))
-//         return res.data.data;
-//     } catch (err) {
-//         console.error('error fetching subcategories', err);
-//     }
-// };
-// export const fetchParentCategory = async (selectedSubCategoryId: string) => {
-//     if (!selectedSubCategoryId) return;
-//     try {
-//         const res = await api.get('/subcategories');
-//         const sub = res.data.data.find((s: any) => s._id === selectedSubCategoryId);
-//         if (sub) {
-//             return sub.categoryId;
-//         }
-//     } catch (err) {
-//         console.error('שגיאה באיתור קטגוריה מהתת קטגוריה:', err);
-//     }
-// };
-
-
-
-
-// // api.get('/users');//get all users
-// // api.post('/users'); // create user
-
-// // api.get('/categories/categories'); //get all categories
-// // api.get('/categories/subcategories'); //get all subcategories
-// // api.post('/categories/addCategory'); // add catogory
-
-// // api.get('/categories/:categoryId/subcategories'); // get all subcategories in category
-// // api.post('/categories/addSubcategory'); // add subcategory
-
-// // api.post('/prompts'); //create user prompt
-// // api.get('/prompts/:usrId'); // get promps for user
-// // api.get('/prompts/users'); // get all prompts
-
-// // api.post('/users/login');// login

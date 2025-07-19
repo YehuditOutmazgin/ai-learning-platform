@@ -38,7 +38,7 @@ const SignUp  = () => {
     if (isAuthenticated) {
       navigate(role === 'admin' ? '/admin' : '/user');
     }
-  }, [isAuthenticated, role, navigate]);
+  }, [isAuthenticated, role]);
 
   return (
     <div>

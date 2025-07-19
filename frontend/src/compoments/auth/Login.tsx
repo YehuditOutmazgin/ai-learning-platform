@@ -6,6 +6,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { loginThunk } from '../../redux/slices/authSlice';
 import { RootState, AppDispatch } from '../../redux/store';
 import { set, useForm } from 'react-hook-form';
+import { getUserFromToken } from '../../utils/token';
 
 interface LoginFormData {
     name: string;
@@ -31,19 +32,21 @@ const Login = () => {
 
             const result = await dispatch(loginThunk(data))
 
-            if (result.type === "auth/login/fulfilled") {
-                alert(JSON.stringify(result));
-                alert(role)
-                // const rol=result.payload.role;
-                //data is the patient details or the therapist details
-                if (role === "admin") {
-                    navigate("/admin")
-                } else if (role === "user") {
-                    navigate("/user")
-                } else {
-
-                }
-            }
+            // if (result.type === "auth/login/fulfilled") {
+            //     // alert(JSON.stringify(result));
+                
+            //     // const rol=result.payload.role;
+            //     //data is the patient details or the therapist details
+            //     // if (role === 'admin') {
+            //     //     alert("admin c")
+            //     //     navigate("/admin")
+            //     // } else if (role === "user") {
+            //     //     alert("user c")
+            //     //     navigate('/user')
+            //     // } else {
+            //     //     alert("null c")
+            //     // }
+            // }
 
         } catch (error) {
             console.error('Login error:', error);
@@ -55,7 +58,7 @@ const Login = () => {
         if (!loading && isAuthenticated) {
             navigate(role === 'admin' ? '/admin' : '/user');
         }
-    }, [isAuthenticated, role, navigate]);
+    }, [isAuthenticated, role]);
 
     return (
         <div>

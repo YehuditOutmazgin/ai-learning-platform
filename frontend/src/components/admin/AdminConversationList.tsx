@@ -2,10 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { getAllUsersPrompts } from '../../api/fetchs';
 import { Prompt } from '../../types/prompt';
 import '../../styles/all.css';
-import { User } from '../../types/prompt';
 import '../../styles/admin-conversation-list.css';
-
-
 
 type Props = {
   onSelectPrompt: (prompt: Prompt) => void;
@@ -68,7 +65,7 @@ const AdminConversationList: React.FC<Props> = ({ onSelectPrompt }) => {
             className="conversation-item"
             onClick={() => openModal(prompt)}
           >
-            <p><strong>{prompt.userId?.name}</strong></p>
+            <p><strong>{prompt.categoryId?.name || 'ללא קטגוריה'}</strong></p>
             <p>{prompt.categoryId?.name} → {prompt.subCategoryId?.name}</p>
             <p><strong>שאלה:</strong> {prompt.prompt.split(' ').slice(0, 4).join(' ')}...</p>
             <p><strong>תשובה:</strong> {prompt.response.split(' ').slice(0, 6).join(' ')}...</p>

@@ -48,7 +48,6 @@
   border-radius: 8px;
   background-color:rgb(63, 62, 60);
   cursor: pointer;
-  /* transition: background-color 0.2s ease; */
   user-select: none;
 }
 
@@ -73,12 +72,4 @@
   margin-top: 6px;
   text-align: left;
 }
-
-/* Modal styles */
-
-
-
-
-
-
 

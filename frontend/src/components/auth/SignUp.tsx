@@ -93,8 +93,7 @@ const SignUp  = () => {
         <p className="signup-text">
           כבר יש לך חשבון?
           <span className="signup-link" onClick={() => navigate('/login')}>
-            להרשמה
-          </span>
+            לכניסה          </span>
         </p>
       </div>
     </div>

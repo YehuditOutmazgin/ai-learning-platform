@@ -6,23 +6,13 @@ import SubCategory from '../models/SubCategory';
 //Validates if a string is a valid MongoDB ObjectId
 
 export const isValidMongoId = (id: string): boolean => {
-  return mongoose.Types.ObjectId.isValid(id);
+ return mongoose.isValidObjectId(id)
 };
 
-//Throws if the userId is not found in DB
 
-export const validateUserExists = async (userId: string) => {
-  if (!isValidMongoId(userId)) {
-    throw new Error('Invalid user ID');
-  }
-  const user = await User.findById(userId);
-  if (!user) {
-    throw new Error('User not found');
-  }
-};
 
 // Throws if category is invalid
- 
+
 export const validateCategoryExists = async (categoryId: string) => {
   if (!isValidMongoId(categoryId)) {
     throw new Error('Invalid category ID');

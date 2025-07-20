@@ -1,122 +1,3 @@
-/* category-manager.css
-
-.category-manager {
-  padding: 10px;
-  background-color: rgba(255, 255, 255, 0.04);
-  border-radius: 12px;
-  color: white;
-  font-family: "Varela Round", sans-serif;
-
-}
-
-.category-manager input[type="text"] {
-  width: 80%;
-  padding: 6px 10px;
-  margin-bottom: 12px;
-  background-color:rgb(63, 62, 60) ;
-  border: 1px solid #ccc;
-  border-radius: 8px;
-  color: white;
-}
-
-.category-manager ul {
-  list-style: none;
-  padding-right: 0;
-}
-
-.category-manager li {
-  margin-bottom: 10px;
-  padding: 6px;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-}
-
-.category-manager li strong {
-  font-size: 14pt;
-  color: rgb(102, 255, 255);
-}
-
-.category-manager li ul {
-  margin-top: 6px;
-  padding-right: 10px;
-}
-
-.category-manager li ul li {
-  font-size: 13px;
-  color: #ccc;
-}
-
-
-.category-manager {
-  padding: 20px;
-  direction: rtl;
-  font-family: Arial;
-}
-
-.header {
-  display: flex;
-  gap: 10px;
-  margin-bottom: 20px;
-  align-items: center;
-}
-
-.search-input {
-  padding: 5px 10px;
-  border-radius: 8px;
-  border: 1px solid #ccc;
-  flex: 1;
-}
-
-.category-list li,
-.search-results li {
-  margin-bottom: 10px;
-}
-
-.search-results mark {
-  background-color: #ffe48f;
-  padding: 0 4px;
-  border-radius: 4px;
-}
-
-.modal-overlay {
-  position: fixed;
-  top: 0;
-  right: 0;
-  left: 0;
-  bottom: 0;
-  background-color: rgba(0,0,0,0.5);
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  z-index: 1000;
-}
-
-.modal {
-  background: rgb(63, 62, 60);
-  padding: 20px;
-  border-radius: 16px;
-  min-width: 300px;
-  max-width: 400px;
-  text-align: center;
-}
-
-.toggle-buttons button {
-  margin: 5px;
-  padding: 5px 10px;
-  border: none;
-  border-radius: 10px;
-  background: #eee;
-  cursor: pointer;
-}
-
-.toggle-buttons .active {
-  background-color: #1e88e5;
-  color: white;
-}
-
-.message {
-  color: green;
-  margin-top: 10px;
-} */
 .category-manager-container {
   padding: 20px;
   background-color: rgba(255, 255, 255, 0.04);
@@ -184,7 +65,8 @@
   border-radius: 4px;
 }
 
-.category-manager-modal-overlay {
+/* .category-manager- */
+.modal-overlay {
   position: fixed;
   top: 0;
   right: 0;
@@ -239,8 +121,8 @@
   font-size: 14px;
 }
 
-.category-manager-message {
-  color: #80ff80;
+.message {
+  color: #6b97e9;
   margin-top: 10px;
 }
 

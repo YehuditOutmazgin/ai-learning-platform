@@ -1,5 +1,5 @@
 
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import ConversationList from './ConversationList';
 import ConversationView from './ConversationView';
 import '../../styles/dashboard.css';
@@ -11,14 +11,16 @@ import { RootState } from '../../redux/store';
 import { useNavigate } from 'react-router-dom';
 
 const UserDashboard = () => {
-  const [selectedConversation, setSelectedConversation] = useState<Prompt | null>(null);
   const dispatch = useDispatch();
-  const { name } = useSelector((state: RootState) => state.auth);
-  const navigate=useNavigate()
+  const { name, role } = useSelector((state: RootState) => state.auth);
+  const navigate = useNavigate()
   const handleLogout = () => {
     dispatch(logout());
     navigate('/login')
   };
+  useEffect(() => {
+    if (role !== 'user') navigate('/login');
+  }, [role]);
 
   return (
     <div className="dashboard-wrapper">
@@ -29,10 +31,10 @@ const UserDashboard = () => {
 
       <div className="dashboard-container">
         <div className="sidebar">
-          <ConversationList onSelect={(prompt: Prompt) => setSelectedConversation(prompt)} />
+          <ConversationList />
         </div>
         <div className="main-content">
-          <ConversationView data={selectedConversation} />
+          <ConversationView />
         </div>
       </div>
     </div>

@@ -1,8 +1,7 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import '../../styles/admin-dashboard.css';
 import UserList from './UserList';
 import AdminConversationList from './AdminConversationList';
-// import AdminConversationView from './AdminConversationView';
 import CategoryManager from './CategoryManager';
 import { Prompt } from '../../types/prompt';
 import { useDispatch, useSelector } from 'react-redux';
@@ -11,15 +10,17 @@ import { useNavigate } from 'react-router-dom';
 import { logout } from '../../redux/slices/authSlice';
 
 const AdminDashboard = () => {
-  const [selectedUser, setSelectedUser] = useState<string | null>(null);
   const [selectedPrompt, setSelectedPrompt] = useState<Prompt | null>(null);
-  const { name } = useSelector((state: RootState) => state.auth);
+  const { name, role } = useSelector((state: RootState) => state.auth);
   const dispatch = useDispatch()
   const navigate = useNavigate()
   const handleLogout = () => {
     dispatch(logout());
     navigate("/login");
   };
+  useEffect(() => {
+    if (role !== 'admin') navigate('/login');
+  }, [role]);
   return (
     <div className="admin-dashboard">
       <div className="welcome">
@@ -27,17 +28,14 @@ const AdminDashboard = () => {
         <button className="logout" onClick={handleLogout}>להתנתק</button>
       </div>       <div className="admin-content">
         <div className="admin-sidebar">
-          <UserList 
-          // onSelectUser={setSelectedUser} 
+          <UserList
           />
         </div>
         <div className="admin-middle">
-          <AdminConversationList 
-          // userId={selectedUser}
-           onSelectPrompt={setSelectedPrompt} />
+          <AdminConversationList
+            onSelectPrompt={setSelectedPrompt} />
         </div>
         <div className="admin-right">
-          {/* <AdminConversationView data={selectedPrompt} /> */}
           <CategoryManager />
         </div>
       </div>

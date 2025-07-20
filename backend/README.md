@@ -80,8 +80,7 @@ Create a `.env` file based on the following structure:
 <pre>
 PORT=5000  
 MONGODB_URI=mongodb://localhost:27017/ai_learning  
-OPENAI_API_KEY=your_openai_key  
-GEMINI_API_KEY=your_gemini_key  
+OPENAI_API_KEY=your_openai_key  //if you won't support openai key  it will run with a mock prompts.
 JWT_SECRET=your_jwt_secret  
 ADMIN_USERNAME=admin  
 ADMIN_PASSWORD=secret123
@@ -90,7 +89,13 @@ ADMIN_PASSWORD=secret123
 
 ## Run Locally
 
-1. Clone the project and enter the backend directory:
+1. Clone the project: 
+   ```git clone https://github.com/YehuditOutmazgin/ai-learning-platform```
+2. Enter to project directory: 
+   ```cd ai-learning-platform```
+---
+### Run Backend
+1. Enter the backend directory:
    ```cd backend```
 
 2. Install dependencies:
@@ -100,7 +105,17 @@ ADMIN_PASSWORD=secret123
    ```npm run dev```
 
 Make sure MongoDB is running locally on port 27017.
+---
+### Run Backend
+1. Enter the backend directory:
+   ```cd frontend```
 
+2. Install dependencies:
+   ```npm install```
+
+3. Start the server:
+   ```npm start```
+   
 ---
 
 ## Sample Login Request

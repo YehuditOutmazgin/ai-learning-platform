@@ -1,20 +1,21 @@
 html {
-    margin: 0;
-    padding: 0;
-    color: white;
-    font-family: "Varela Round", "Comic Sans MS";
-    width: 100%;
-    height: 100%;
-    width: 100%;
-    height: 100%;
-    background-color: rgb(63, 62, 60);
-    background-position: top;
-    top: 0;
-    left: 0;
-    text-align: right;
-    direction: rtl;
+  margin: 0;
+  padding: 0;
+  color: white;
+  font-family: "Varela Round", "Comic Sans MS";
+  width: 100%;
+  height: 100%;
+  width: 100%;
+  height: 100%;
+  background-color: rgb(63, 62, 60);
+  background-position: top;
+  top: 0;
+  left: 0;
+  text-align: right;
+  direction: rtl;
 
 }
+
 .close-btn {
   background-color: #007bff;
   color: white;
@@ -26,62 +27,68 @@ html {
 }
 
 ::selection {
-    background-color: rgb(142, 204, 181);
+  background-color: rgb(142, 204, 181);
 }
 
 .notCorrect {
-    color: rgb(10, 185, 185);
+  color: rgb(10, 185, 185);
 }
 
 .error {
-    color: red;
-    background-color: antiquewhite;
+  color: red;
+  background-color: antiquewhite;
 }
 
 .logout {
-    background-color: rgb(101, 121, 121);
-    color: white;
-    border: none;
-    border-radius: 5px;
-    padding: 10px 20px;
-    cursor: pointer;
-    font-size: 16px;
-    transition: background-color 0.3s;
-    position: absolute;
-    left: 20px;
-    top: 20px;
+  background-color: rgb(101, 121, 121);
+  color: white;
+  border: none;
+  border-radius: 5px;
+  padding: 10px 20px;
+  cursor: pointer;
+  font-size: 16px;
+  transition: background-color 0.3s;
+  position: absolute;
+  left: 20px;
+  top: 20px;
 }
 
 .welcome {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    background-color: #252323;
-    padding: 10px 20px;
-    font-size: 20px;
-    border-bottom: 1px solid #ccc;
-    height: 40px;
-    direction: rtl;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background-color: #252323;
+  padding: 10px 20px;
+  font-size: 20px;
+  border-bottom: 1px solid #ccc;
+  height: 40px;
+  direction: rtl;
 }
 
 button:disabled {
-    background-color: #d21111;
-    cursor: not-allowed;
-    opacity: 0.7;
+  background-color: #d21111;
+  cursor: not-allowed;
+  opacity: 0.7;
 }
+
 /****************/
 .close-btn:hover {
   background-color: #b37100;
 }
+
 .modal-overlay {
   position: fixed;
-  top: 0; left: 0; right: 0; bottom: 0;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
   background-color: rgba(0, 0, 0, 0.6);
   display: flex;
   justify-content: center;
   align-items: center;
   z-index: 1500;
 }
+
 .modal-content {
   background-color: rgb(63, 62, 60);
   border-radius: 16px;
@@ -94,7 +101,9 @@ button:disabled {
   box-shadow: 0 0 15px #c0c8d0;
   direction: rtl;
   text-align: right;
+  justify-content: center;
 }
+
 .modal-content h3 {
   margin-top: 0;
   margin-bottom: 15px;
@@ -119,30 +128,31 @@ button:disabled {
   display: block;
   margin-left: auto;
 }
+
 /*************************************/
 /* Loading spinner */
 .loading {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    padding: 40px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 40px;
 }
 
 .spinner {
-    width: 40px;
-    height: 40px;
-    border: 4px solid #f3f3f3;
-    border-top: 4px solid var(--primary-color);
-    border-radius: 50%;
-    animation: spin 1s linear infinite;
+  width: 40px;
+  height: 40px;
+  border: 4px solid #f3f3f3;
+  border-top: 4px solid var(--primary-color);
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
 }
 
 @keyframes spin {
-    0% {
-        transform: rotate(0deg);
-    }
+  0% {
+    transform: rotate(0deg);
+  }
 
-    100% {
-        transform: rotate(360deg);
-    }
+  100% {
+    transform: rotate(360deg);
+  }
 }

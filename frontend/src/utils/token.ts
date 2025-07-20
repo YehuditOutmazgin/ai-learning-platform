@@ -2,7 +2,7 @@ import { jwtDecode } from 'jwt-decode';
 
 type TokenPayload = {
     userId: string | undefined;
-    name: string; 
+    name: string;
     role: string;
     iat: number;
     exp: number;
@@ -27,10 +27,10 @@ export const getUserFromToken = (): TokenPayload | null => {
     try {
         const decoded = jwtDecode<TokenPayload>(token);
 
-        const now = Date.now() / 1000; 
+        const now = Date.now() / 1000;
         if (decoded.exp < now) {
             console.warn('הטוקן פג תוקף');
-            removeToken(); 
+            removeToken();
             return null;
         }
 
@@ -45,12 +45,12 @@ export const isAdmin = (): boolean => {
     if (!token) return false;
 
     try {
-        const now = Date.now() / 1000; 
+        const now = Date.now() / 1000;
 
         const decoded = jwtDecode<TokenPayload>(token);
         if (decoded.exp < now) {
             console.warn('הטוקן פג תוקף');
-            removeToken(); 
+            removeToken();
             return false;
         }
         return decoded.role === 'admin';

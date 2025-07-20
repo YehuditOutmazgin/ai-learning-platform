@@ -49,7 +49,10 @@ export const authMiddleware = (req: AuthenticatedRequest, _res: Response, next: 
   role: decoded.role,
 };
     next();
-  } catch (err) {
-    throw new AppError('Invalid token', 403);
+  } catch (err: any) {
+  if (err.name === 'TokenExpiredError') {
+    throw new AppError('Token expired', 401);
   }
+  throw new AppError('Invalid token', 403);
+}
 };

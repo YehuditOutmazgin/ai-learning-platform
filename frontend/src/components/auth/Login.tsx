@@ -3,10 +3,9 @@ import '../../styles/login-sinup.css';
 import '../../styles/all.css';
 import { useNavigate } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
-import { loginThunk } from '../../redux/slices/authSlice';
+import { clearError, loginThunk } from '../../redux/slices/authSlice';
 import { RootState, AppDispatch } from '../../redux/store';
-import { set, useForm } from 'react-hook-form';
-import { getUserFromToken } from '../../utils/token';
+import { useForm } from 'react-hook-form';
 
 interface LoginFormData {
     name: string;
@@ -16,47 +15,28 @@ interface LoginFormData {
 const Login = () => {
     const navigate = useNavigate();
     const dispatch = useDispatch<AppDispatch>();
-    const [loading, setLoading] = useState(false);
     const {
         register,
         handleSubmit,
         formState: { errors },
     } = useForm<LoginFormData>();
 
-    const { isAuthenticated, role, error } = useSelector(
+    const { isAuthenticated, role, error ,loading} = useSelector(
         (state: RootState) => state.auth
     );
 
     const onSubmit = async (data: LoginFormData) => {
         try {
-
-            const result = await dispatch(loginThunk(data))
-
-            // if (result.type === "auth/login/fulfilled") {
-            //     // alert(JSON.stringify(result));
-                
-            //     // const rol=result.payload.role;
-            //     //data is the patient details or the therapist details
-            //     // if (role === 'admin') {
-            //     //     alert("admin c")
-            //     //     navigate("/admin")
-            //     // } else if (role === "user") {
-            //     //     alert("user c")
-            //     //     navigate('/user')
-            //     // } else {
-            //     //     alert("null c")
-            //     // }
-            // }
-
+            dispatch(clearError());
+            await dispatch(loginThunk(data))
         } catch (error) {
             console.error('Login error:', error);
-            setLoading(false);
         }
     };
 
     useEffect(() => {
         if (!loading && isAuthenticated) {
-            navigate(role === 'admin' ? '/admin' : '/user');
+            navigate(role === 'admin' ? '/admin-dashboard' : '/user-dashboard');
         }
     }, [isAuthenticated, role]);
 

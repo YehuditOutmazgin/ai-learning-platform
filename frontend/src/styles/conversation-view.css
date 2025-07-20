@@ -12,8 +12,6 @@ html {
     height: 100%;
 }
 
-
-
 .selectors {
     display: flex;
     gap: 10px;
@@ -77,11 +75,3 @@ html {
 .send-area button:hover {
     background-color: gray;
 }
-/* input[type="text"] {
-  width: 100%;
-  padding: 5px;
-  margin-bottom: 10px;
-  background-color: transparent;
-  border: 1px solid #ccc;
-  color: white;
-} */

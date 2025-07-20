@@ -2,17 +2,8 @@ import React, { useEffect, useState } from 'react';
 import { getAllUsers, getUserPrompts } from '../../api/fetchs';
 import '../../styles/all.css';
 import '../../styles/userList.css';
-import { User ,Prompt} from '../../types/prompt';
-// interface User {
-//   _id: string;
-//   name: string;
-// }
-
-// interface Prompt {
-//   _id: string;
-//   prompt: string;
-//   response: string;
-// }
+import { Prompt } from '../../types/prompt';
+import { User } from '../../types/user';
 
 const UserList = () => {
   const [users, setUsers] = useState<User[]>([]);

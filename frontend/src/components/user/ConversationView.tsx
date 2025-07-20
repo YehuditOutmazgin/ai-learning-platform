@@ -7,7 +7,9 @@ import '../../styles/all.css';
 import { useSelector, useDispatch } from 'react-redux';
 import { RootState, AppDispatch } from '../../redux/store';
 import { fetchCategoriesThunk, fetchSubCategoriesThunk } from '../../redux/slices/categorySlice';
-import { Category ,SubCategory} from '../../types/prompt';
+import { SubCategory } from '../../types/subCategory';
+import { Category } from '../../types/category';
+import { fetchPromptsThunk } from '../../redux/slices/promptSlice';
 interface ConversationData {
     prompt: string;
     response: string;
@@ -15,21 +17,9 @@ interface ConversationData {
 
 
 
-// interface SubCategory {
-//     _id: string;
-//     name: string;
-//     categoryId: Category;
-// }
-
-interface ConversationViewProps {
-    data: ConversationData | null;
-}
-
-const ConversationView: React.FC<ConversationViewProps> = ({ data }) => {
+const ConversationView = () => {
     const dispatch = useDispatch<AppDispatch>();
-    const { name } = useSelector((state: RootState) => state.auth);
     const { categories, subcategories } = useSelector((state: RootState) => state.categories);
-
     const [category, setCategory] = useState('');
     const [subcategory, setSubcategory] = useState('');
     const [filteredSubcategories, setFilteredSubcategories] = useState<SubCategory[]>([]);
@@ -39,10 +29,12 @@ const ConversationView: React.FC<ConversationViewProps> = ({ data }) => {
     const [error, setError] = useState('');
     const isFormValid = message.trim() !== '' && category !== '' && subcategory !== '';
     const { loading } = useSelector((state: RootState) => state.auth)
+    const [isSending, setIsSending] = useState(false);
 
     useEffect(() => {
         dispatch(fetchCategoriesThunk());
         dispatch(fetchSubCategoriesThunk());
+        dispatch(fetchPromptsThunk())
     }, [dispatch]);
 
     useEffect(() => {
@@ -53,12 +45,12 @@ const ConversationView: React.FC<ConversationViewProps> = ({ data }) => {
         if (!category) {
             setFilteredSubcategories(subcategories);
         } else {
-            if(!subcategory){
-            const filtered = subcategories.filter((sub: SubCategory) => sub.categoryId._id === category);
-            setFilteredSubcategories(filtered);
+            if (!subcategory) {
+                const filtered = subcategories.filter((sub: SubCategory) => sub.categoryId._id === category);
+                setFilteredSubcategories(filtered);
             }
             if (subcategory) {
-                const sub=subcategories.find((s:SubCategory)=>s._id===subcategory)
+                const sub = subcategories.find((s: SubCategory) => s._id === subcategory)
                 const stillValid = categories.find((cat: Category) => cat._id === sub?.categoryId._id);
                 if (!stillValid) setSubcategory('');
             }
@@ -84,7 +76,12 @@ const ConversationView: React.FC<ConversationViewProps> = ({ data }) => {
     const onSubcategoryChange = (value: string) => {
         setSubcategory(value);
     };
-
+    const handleNewConversation = () => {
+        setMessage('');
+        setSubcategory('');
+        setCategory('');
+        setResponse('')
+    }
     const handleSend = async () => {
         if (!message || !category || !subcategory || disabled) return;
 
@@ -93,18 +90,20 @@ const ConversationView: React.FC<ConversationViewProps> = ({ data }) => {
             setError('המשתמש לא מחובר');
             return;
         }
-
         setDisabled(true);
         setResponse('');
         setError('')
-
+        setIsSending(true);
+        setResponse('טוען...')
         try {
             const res = await createPrompt(user.userId, category, subcategory, message);
             setResponse(res.response);
+            dispatch(fetchPromptsThunk())
         } catch (err) {
             setResponse('שגיאה בשליחה');
         } finally {
             setDisabled(false);
+            setIsSending(false);
         }
     };
 
@@ -131,7 +130,6 @@ const ConversationView: React.FC<ConversationViewProps> = ({ data }) => {
                 </div>
             </div>
             <div className="chat-box">
-                {data && <div className="prev-message">{data.prompt} → {data.response}</div>}
                 {error && <div className='error'>{error}</div>}
                 {response && <div className="ai-response">{response}</div>}
             </div>
@@ -145,7 +143,11 @@ const ConversationView: React.FC<ConversationViewProps> = ({ data }) => {
                     disabled={disabled}
                 />
                 <button onClick={handleSend} disabled={disabled || !isFormValid}>
-                    {loading ? <div className="spinner"></div> : "↑ שלח"}
+                    {isSending ? 'שולח...' : 'שלח'}
+                </button>
+
+                <button onClick={handleNewConversation}disabled={isSending} >
+                    ➕ שיחה חדשה
                 </button>
             </div>
         </div>

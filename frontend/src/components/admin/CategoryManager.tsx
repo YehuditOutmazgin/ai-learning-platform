@@ -9,20 +9,20 @@ import {
 } from '../../redux/slices/categorySlice';
 import '../../styles/all.css';
 import '../../styles/category-manager.css';
-import { error } from 'console';
-import { Category, SubCategory } from '../../types/prompt';
+import { SubCategory } from '../../types/subCategory';
+import { Category } from '../../types/category';
 
 const CategoryManager = () => {
   const dispatch = useDispatch<AppDispatch>();
   const { categories, subcategories } = useSelector((state: RootState) => state.categories);
-
   const [search, setSearch] = useState('');
   const [showModal, setShowModal] = useState(false);
   const [isAddCategory, setIsAddCategory] = useState(true);
   const [newName, setNewName] = useState('');
   const [selectedCategoryId, setSelectedCategoryId] = useState('');
   const [message, setMessage] = useState('');
-const [searchFiltered, setSearchFiltered] = useState<FilteredCategory[]>([]);
+  const [searchFiltered, setSearchFiltered] = useState<FilteredCategory[]>([]);
+
   useEffect(() => {
     dispatch(fetchCategoriesThunk());
     dispatch(fetchSubCategoriesThunk());
@@ -30,18 +30,17 @@ const [searchFiltered, setSearchFiltered] = useState<FilteredCategory[]>([]);
 
   const handleAdd = async () => {
     if (!newName.trim()) {
-      alert (" הכנס שם ")
+      alert(" הכנס שם ")
       return;
-
     }
     try {
       if (isAddCategory) {
         await dispatch(addCategoryThunk({ name: newName })).unwrap();
-        setMessage('קטגוריה נוספה בהצלחה');
+        setMessage(`קטגוריה  '${newName}'  נוספה בהצלחה  `);
       } else {
         if (!selectedCategoryId) return;
         await dispatch(addSubCategoryThunk({ name: newName, categoryId: selectedCategoryId })).unwrap();
-        setMessage('תת־קטגוריה נוספה בהצלחה');
+        setMessage(`תת - קטגוריה  '${newName}'  נוספה בהצלחה  `);
       }
       setNewName('');
       setSelectedCategoryId('');
@@ -52,39 +51,38 @@ const [searchFiltered, setSearchFiltered] = useState<FilteredCategory[]>([]);
   };
 
 
-type FilteredCategory = {
-  _id: string;
-  name: string;
-  subs: SubCategory[];
-};
+  type FilteredCategory = {
+    _id: string;
+    name: string;
+    subs: SubCategory[];
+  };
 
-useEffect(() => {
-  const searchLower = search.toLowerCase();
+  useEffect(() => {
+    setMessage('')
+    const searchLower = search.toLowerCase();
+    const filtered: FilteredCategory[] = categories.map((cat: Category) => {
+      const matchCat = cat.name.toLowerCase().includes(searchLower);
+      const subsInCat = subcategories.filter(
+        (sub: SubCategory) => sub.categoryId._id === cat._id
+      );
 
-  const filtered: FilteredCategory[] = categories.map((cat: Category) => {
-    const matchCat = cat.name.toLowerCase().includes(searchLower);
+      const matchingSubs = matchCat
+        ? subsInCat
+        : subsInCat.filter((sub) => sub.name.toLowerCase().includes(searchLower));
 
-    const subsInCat = subcategories.filter(
-      (sub: SubCategory) => sub.categoryId._id === cat._id
-    );
+      if (matchCat || matchingSubs.length > 0) {
+        return {
+          _id: cat._id,
+          name: cat.name,
+          subs: matchingSubs,
+        };
+      }
 
-    const matchingSubs = matchCat
-      ? subsInCat 
-      : subsInCat.filter((sub) => sub.name.toLowerCase().includes(searchLower));
+      return null;
+    }).filter(Boolean) as FilteredCategory[];
 
-    if (matchCat || matchingSubs.length > 0) {
-      return {
-        _id: cat._id,
-        name: cat.name,
-        subs: matchingSubs,
-      };
-    }
-
-    return null;
-  }).filter(Boolean) as FilteredCategory[];
-
-  setSearchFiltered(filtered);
-}, [search, categories, subcategories]);
+    setSearchFiltered(filtered);
+  }, [search, categories, subcategories]);
 
   return (
     <div className="category-manager">

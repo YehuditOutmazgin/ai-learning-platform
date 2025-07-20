@@ -3,15 +3,6 @@ import { getAllUsersPrompts, getUserPrompts } from '../../api/fetchs';
 import { getUserFromToken } from '../../utils/token';
 import { Prompt } from '../../types/prompt';
 
-// interface Prompt {
-//   _id: string;
-//   prompt: string;
-//   response: string;
-//   userId: string;
-//   categoryId: string;
-//   subCategoryId: string;
-//   createdAt: string;
-// }
 
 interface PromptsState {
   prompts: Prompt[];
@@ -25,8 +16,7 @@ const initialState: PromptsState = {
   error: null,
 };
 
-// Thunks
-export const fetchPrompts = createAsyncThunk<Prompt[]>(
+export const fetchPromptsThunk = createAsyncThunk<Prompt[]>(
   'prompts/fetchPrompts',
   async (_, { rejectWithValue }) => {
     try {
@@ -44,22 +34,21 @@ export const fetchPrompts = createAsyncThunk<Prompt[]>(
   }
 );
 
-// Slice
 const promptsSlice = createSlice({
   name: 'prompts',
   initialState,
   reducers: {},
   extraReducers: (builder) => {
     builder
-      .addCase(fetchPrompts.pending, (state) => {
+      .addCase(fetchPromptsThunk.pending, (state) => {
         state.loading = true;
         state.error = null;
       })
-      .addCase(fetchPrompts.fulfilled, (state, action) => {
+      .addCase(fetchPromptsThunk.fulfilled, (state, action) => {
         state.prompts = action.payload;
         state.loading = false;
       })
-      .addCase(fetchPrompts.rejected, (state, action) => {
+      .addCase(fetchPromptsThunk.rejected, (state, action) => {
         state.loading = false;
         state.error = action.payload as string;
       });

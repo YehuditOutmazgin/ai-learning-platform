@@ -19,7 +19,6 @@ const Select: React.FC<Props> = ({ label, value, options = [], onChange }) => (
       className="select-input"
       value={value}
       onChange={(e) => onChange(e.target.value)}
-      dir="rtl"
     >
       <option value="">בחר {label}</option>
       {options.length === 0 ? (

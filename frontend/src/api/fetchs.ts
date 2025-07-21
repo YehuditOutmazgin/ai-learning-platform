@@ -16,7 +16,8 @@ export const login = async (name: string, phone: string) => {
     const res = await api.post("/auth/login", { name, phone })
     return res.data.data
   } catch (e: any) {
-    if (e?.data?.message) throw new Error("Invalid username or phone number")
+    console.log(JSON.stringify(e))
+    if (e?.data?.message) throw new Error("Invalid user name or phone number")
     throw new Error("Login error: " + (e?.data?.message || e.message))
   }
 }

@@ -1,6 +1,7 @@
 import express from 'express';
 import { loginUser } from '../controllers/authController';
 import { createUser } from '../controllers/userController';
+import { validateCreateUser } from '../validators/userValidator';
 
 const router = express.Router();
 
@@ -59,6 +60,6 @@ router.post('/login', loginUser);
  *       400:
  *         description: Bad request
  */
-router.post('/signup', createUser);
+router.post('/signup',validateCreateUser, createUser);
 
 export default router;

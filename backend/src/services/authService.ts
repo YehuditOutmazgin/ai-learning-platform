@@ -21,6 +21,8 @@ export const login = async (name: string, phone: string) => {
             return { success: true, message: 'User login successful', data: { token, userId } };
         }
     } catch (error) {
-        throw new AppError('error login',500)
+        if(error instanceof AppError)
+            throw error;
+        throw new AppError('Error login',500)
     }
 };

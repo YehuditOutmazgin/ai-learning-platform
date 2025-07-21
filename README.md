@@ -59,25 +59,23 @@ backend/
 ```
 frontend/
 ├── src/
+│   ├── api/
 │   ├── components/
-│   ├── components/
-│   ├── components/
-│   │   ├── admin/
-│   │   ├── auth/
-│   │   ├── user/
-│   │   ├── shared/
-│   │   └── shared/
+│   │   ├── Common/
+│   │   └── Layout/
+│   ├── pages/
+│   │   ├── Admin/
+│   │   ├── Auth/
+│   │   └── User/
 │   ├── redux/
 │   │   ├── slices/
 │   │   └──store.tsx
-│   ├── api/
 │   ├── styles/
 │   ├── types/
 │   ├── utils/
 │   ├── index.tsx
 │   └── App.tsx
 ├── .env
-├── package.json
 ├── package.json
 └── tsconfig.json
 
@@ -121,7 +119,6 @@ ADMIN_PASSWORD=secret123
 | POST   | /api/prompts                                  | Submit a new prompt                              | User only          |
 | GET    | /api/prompts/get/:userId                      | Get prompt history for a specific user           | Admin/User (self)  |
 | GET    | /api/prompts/users                            | Get all user prompts                             | Admin only         |
-| PUT    | /api/prompts/:promptId                        | Update a specific prompt                         | User/Admin         |
 | DELETE | /api/prompts/:promptId                        | Delete a specific prompt                         | User/Admin         |
 
 
@@ -134,6 +131,7 @@ ADMIN_PASSWORD=secret123
 PORT=5000
 MONGODB_URI=mongodb://localhost:27017/ai_learning
 OPENAI_API_KEY=your_openai_key
+# if you want without ai generate - mock remove  the OPENAI_API_KEY
 JWT_SECRET=your_jwt_secret
 ADMIN_USERNAME=admin
 ADMIN_PASSWORD=secret123
@@ -143,6 +141,7 @@ ADMIN_PASSWORD=secret123
 ```
 REACT_APP_API_BASE_URL=http://localhost:5000/api
 ```
+Don't forget to add .env files in order to run the project
 
 ---
 

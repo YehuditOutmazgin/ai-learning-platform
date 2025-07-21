@@ -39,9 +39,14 @@ const AuthPage: React.FC = () => {
     }
 
     if (isLogin) {
-      dispatch(loginThunk({ name, phone }))
+      await dispatch(loginThunk({ name, phone }))
     } else {
-      dispatch(signUpThunk({ name, phone }))
+     await dispatch(signUpThunk({ name, phone }))
+      if(!error){
+      alert("user signed up succesfully.")
+      setIsLogin(true)
+      setName(name)
+      setPhone(phone)}
     }
   }
 
@@ -50,7 +55,7 @@ const AuthPage: React.FC = () => {
       <div className="card auth-card">
         <div className="auth-header">
           <h1 className="auth-title">AI Learning Platform</h1>
-          <p className="auth-subtitle">{isLogin ? "Sign in to your account" : "Create a new account"}</p>
+          <p className=" auth-subtitle">{isLogin ? "Sign in to your account" : "Create a new account"}</p>
         </div>
 
         <form onSubmit={handleSubmit}>
@@ -82,12 +87,12 @@ const AuthPage: React.FC = () => {
 
           {error && <div className="error">{error}</div>}
 
-          <button type="submit" className="btn btn-primary btn-full-width mb-16" disabled={loading}>
+          <button type="submit" className= {` btn btn-primary btn-full-width mb-16 ${isLogin? "signin":"signup"}`} disabled={loading}>
             {loading ? "Please wait..." : isLogin ? "Sign In" : "Sign Up"}
           </button>
         </form>
 
-        <div className="auth-switch-container">
+        <div className="auth-switch-container" >
           <button type="button" onClick={() => setIsLogin(!isLogin)} className="auth-switch-btn">
             {isLogin ? "Don't have an account? Sign up" : "Already have an account? Sign in"}
           </button>

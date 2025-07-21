@@ -4,9 +4,13 @@ import { AppError } from '../utils/AppError';
 import { isValidMongoId } from './validationService';
 
 export const createUser = async (name: string, phone: string) => {
-  if (!name || !phone) {
+  if (!name || !phone ) {
     throw new AppError('Name and phone are required', 410);
   }
+  if(name.length<2 )
+    throw new AppError("Name is too short");
+  if( phone.length<9)
+    throw new AppError("Phone is invalis")
   const existing = await User.findOne({ phone });
   if (existing || phone == config.adminPassword
   ) {

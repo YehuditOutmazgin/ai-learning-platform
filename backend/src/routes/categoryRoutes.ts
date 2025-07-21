@@ -1,24 +1,15 @@
-// import express from 'express';
-// import { addCategory, addSubCategory, getAllCategories, getAllSubCategories, getSubCategoriesByCategory } from '../controllers/categoryController';
-// import { authMiddleware } from '../middlewares/authMiddleware';
-// import { requireRole } from '../middlewares/roleMiddleware';
 
-// const router = express.Router();
-
-// router.get('/categories', authMiddleware, requireRole(['user', 'admin']), getAllCategories);
-// router.get('/subcategories', authMiddleware, requireRole(['user', 'admin']), getAllSubCategories)
-// router.get('/:categoryId/subcategories', authMiddleware, requireRole(['user', 'admin']), getSubCategoriesByCategory);
-// router.post('/addSubcategory', authMiddleware, requireRole(['admin']), addSubCategory);
-// router.post('/addCategory', authMiddleware, requireRole(['admin']), addCategory);
-// export default router;
-// src/routes/categoryRoutes.ts
 import express from 'express';
 import {
   addCategory,
   addSubCategory,
+  deleteCategory,
+  deleteSubCategory,
   getAllCategories,
   getAllSubCategories,
   getSubCategoriesByCategory,
+  updateCategory,
+  updateSubCategory,
 } from '../controllers/categoryController';
 import { authMiddleware } from '../middlewares/authMiddleware';
 import { requireRole } from '../middlewares/roleMiddleware';
@@ -127,5 +118,103 @@ router.post('/addCategory', authMiddleware, requireRole(['admin']), addCategory)
  *         description: Subcategory added
  */
 router.post('/addSubcategory', authMiddleware, requireRole(['admin']), addSubCategory);
+
+/**
+ * @swagger
+ * /api/categories/category/{categoryId}:
+ *   put:
+ *     summary: Update a category by ID
+ *     tags: [Categories]
+ *     parameters:
+ *       - in: path
+ *         name: categoryId
+ *         required: true
+ *         schema:
+ *           type: string
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               name:
+ *                 type: string
+ *     security:
+ *       - bearerAuth: []
+ *     responses:
+ *       200:
+ *         description: Category updated successfully
+ */
+router.put('/category/:categoryId', authMiddleware, requireRole(['admin']), updateCategory);
+
+/**
+ * @swagger
+ * /api/categories/category/{categoryId}:
+ *   delete:
+ *     summary: Delete a category by ID
+ *     tags: [Categories]
+ *     parameters:
+ *       - in: path
+ *         name: categoryId
+ *         required: true
+ *         schema:
+ *           type: string
+ *     security:
+ *       - bearerAuth: []
+ *     responses:
+ *       200:
+ *         description: Category deleted successfully
+ */
+router.delete('/category/:categoryId', authMiddleware, requireRole(['admin']), deleteCategory);
+
+/**
+ * @swagger
+ * /api/categories/subcategory/{subCategoryId}:
+ *   put:
+ *     summary: Update a subcategory by ID
+ *     tags: [Categories]
+ *     parameters:
+ *       - in: path
+ *         name: subCategoryId
+ *         required: true
+ *         schema:
+ *           type: string
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               name:
+ *                 type: string
+ *     security:
+ *       - bearerAuth: []
+ *     responses:
+ *       200:
+ *         description: Subcategory updated successfully
+ */
+router.put('/subcategory/:subCategoryId', authMiddleware, requireRole(['admin']), updateSubCategory);
+
+/**
+ * @swagger
+ * /api/categories/subcategory/{subCategoryId}:
+ *   delete:
+ *     summary: Delete a subcategory by ID
+ *     tags: [Categories]
+ *     parameters:
+ *       - in: path
+ *         name: subCategoryId
+ *         required: true
+ *         schema:
+ *           type: string
+ *     security:
+ *       - bearerAuth: []
+ *     responses:
+ *       200:
+ *         description: Subcategory deleted successfully
+ */
+router.delete('/subcategory/:subCategoryId', authMiddleware, requireRole(['admin']), deleteSubCategory);
 
 export default router;

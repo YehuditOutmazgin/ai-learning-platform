@@ -52,3 +52,65 @@ export const addCategory = async (req: Request, res: Response, next: NextFunctio
     next(error);
   }
 };
+
+export const updateCategory = async (req: Request, res: Response, next: NextFunction) => {
+  try {
+    const { categoryId } = req.params;
+    const { name } = req.body;
+
+    const updatedCategory = await categoryService.updateCategory(categoryId, name);
+    if (!updatedCategory) {
+      throw new AppError('Category not found', 404);
+    }
+
+    res.json(successResponse('Category updated successfully', updatedCategory));
+  } catch (error) {
+    next(error);
+  }
+};
+
+export const deleteCategory = async (req: Request, res: Response, next: NextFunction) => {
+  try {
+    const { categoryId } = req.params;
+
+    const deleted = await categoryService.deleteCategory(categoryId);
+    if (!deleted) {
+      throw new AppError('Category not found', 404);
+    }
+
+    res.json(successResponse('Category deleted successfully', null));
+  } catch (error) {
+    next(error);
+  }
+};
+
+export const updateSubCategory = async (req: Request, res: Response, next: NextFunction) => {
+  try {
+    const {  subCategoryId } = req.params;
+    const { name } = req.body;
+
+    const updatedSubCategory = await categoryService.updateSubCategory(subCategoryId, name);
+    if (!updatedSubCategory) {
+      throw new AppError('Subcategory not found', 404);
+    }
+
+    res.json(successResponse('Subcategory updated successfully', updatedSubCategory));
+  } catch (error) {
+    next(error);
+  }
+};
+
+export const deleteSubCategory = async (req: Request, res: Response, next: NextFunction) => {
+  try {
+    const { subCategoryId } = req.params;
+
+    const deleted = await categoryService.deleteSubCategory(subCategoryId);
+    if (!deleted) {
+      throw new AppError('Subcategory not found', 404);
+    }
+
+    res.json(successResponse('Subcategory deleted successfully', null));
+  } catch (error) {
+    next(error);
+  }
+};

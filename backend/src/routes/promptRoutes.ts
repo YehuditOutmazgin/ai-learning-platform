@@ -1,24 +1,7 @@
-// import express, { Request, Response, NextFunction } from 'express';
-// import { createPrompt, getUserPrompts, getUsersPrompts } from '../controllers/promptController';
-// import { validateCreatePrompt } from '../validators/promptValidator';
-// import validateRequest from '../middlewares/validateRequest';
-// import { authMiddleware } from '../middlewares/authMiddleware';
-// import { requireRole } from '../middlewares/roleMiddleware';
-// import { AppError } from '../utils/AppError';
-// import config from '../config/config';
-
-// const router = express.Router();
-
-// router.post('/', authMiddleware, requireRole(['user']), validateCreatePrompt, validateRequest, createPrompt);
-// router.get('/:userId', authMiddleware, requireRole(['admin','user']), getUserPrompts);
-// router.get('/users', authMiddleware, requireRole(['admin']), getUsersPrompts);
-
-
-// export default router;// src/routes/promptRoutes.ts
-
 import express from 'express';
 import {
   createPrompt,
+  deletePrompt,
   getUserPrompts,
   getUsersPrompts,
 } from '../controllers/promptController';
@@ -96,5 +79,75 @@ router.get('/get/:userId', authMiddleware, requireRole(['admin', 'user']), getUs
  *         description: All user prompts
  */
 router.get('/users', authMiddleware, requireRole(['admin']), getUsersPrompts);
+// /**
+//  * @swagger
+//  * /api/prompts/{promptId}:
+//  *   put:
+//  *     summary: Update a specific prompt (send again)
+//  *     tags: [Prompts]
+//  *     security:
+//  *       - bearerAuth: []
+//  *     parameters:
+//  *       - in: path
+//  *         name: promptId
+//  *         required: true
+//  *         schema:
+//  *           type: string
+//  *         description: ID of the prompt to update
+//  *     requestBody:
+//  *       required: true
+//  *       content:
+//  *         application/json:
+//  *           schema:
+//  *             type: object
+//  *             properties:
+//  *               categoryId:
+//  *                 type: string
+//  *               subCategoryId:
+//  *                 type: string
+//  *               prompt:
+//  *                 type: string
+//  *     responses:
+//  *       200:
+//  *         description: Prompt updated successfully
+//  *       404:
+//  *         description: Prompt not found
+//  *       400:
+//  *         description: Invalid input
+//  */
+// router.put(
+//   '/:promptId',
+//   authMiddleware,
+//   requireRole(['user', 'admin']),
+//   updatePrompt
+// );
+
+/**
+ * @swagger
+ * /api/prompts/{promptId}:
+ *   delete:
+ *     summary: Delete a specific prompt
+ *     tags: [Prompts]
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: promptId
+ *         required: true
+ *         schema:
+ *           type: string
+ *         description: ID of the prompt to delete
+ *     responses:
+ *       200:
+ *         description: Prompt deleted successfully
+ *       404:
+ *         description: Prompt not found
+ */
+router.delete(
+  '/:promptId',
+  authMiddleware,
+  requireRole(['user', 'admin']),
+  deletePrompt
+);
 
 export default router;

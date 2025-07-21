@@ -1,19 +1,23 @@
-import { createSlice, createAsyncThunk, PayloadAction } from '@reduxjs/toolkit';
+import { createSlice, createAsyncThunk, type PayloadAction } from "@reduxjs/toolkit"
 import {
   getAllCategories,
   getAllSubCategories,
   addCategory,
   addSubCategory,
-} from '../../api/fetchs';
-import { Category } from '../../types/category';
-import { SubCategory } from '../../types/subCategory';
-
+  updateCategory,
+  updateSubCategory,
+  deleteCategory,
+  deleteSubCategory,
+  getSubCategoriesInCategories,
+} from "../../api/fetchs"
+import type { Category } from "../../types/category"
+import type { SubCategory } from "../../types/subCategory"
 
 interface CategoryState {
-  categories: Category[];
-  subcategories: SubCategory[];
-  loading: boolean;
-  error: string | null;
+  categories: Category[]
+  subcategories: SubCategory[]
+  loading: boolean
+  error: string | null
 }
 
 const initialState: CategoryState = {
@@ -21,120 +25,160 @@ const initialState: CategoryState = {
   subcategories: [],
   loading: false,
   error: null,
-};
+}
 
-// FETCH ALL CATEGORIES
 export const fetchCategoriesThunk = createAsyncThunk<Category[]>(
-  'categories/fetchAll',
+  "categories/fetchAll",
   async (_, { rejectWithValue }) => {
     try {
-      return await getAllCategories();
+      return await getAllCategories()
     } catch (err: any) {
-      return rejectWithValue(err.message);
+      return rejectWithValue(err.message)
     }
-  }
-);
+  },
+)
 
-// FETCH ALL SUBCATEGORIES
 export const fetchSubCategoriesThunk = createAsyncThunk<SubCategory[]>(
-  'subcategories/fetchAll',
+  "subcategories/fetchAll",
   async (_, { rejectWithValue }) => {
     try {
-      return await getAllSubCategories();
+      return await getAllSubCategories()
     } catch (err: any) {
-      return rejectWithValue(err.message);
+      return rejectWithValue(err.message)
     }
-  }
-);
+  },
+)
 
-// ADD CATEGORY
+export const fetchSubCategoriesByCategoryThunk = createAsyncThunk<SubCategory[], string>(
+  "subcategories/fetchByCategory",
+  async (categoryId, { rejectWithValue }) => {
+    try {
+      return await getSubCategoriesInCategories(categoryId)
+    } catch (err: any) {
+      return rejectWithValue(err.message)
+    }
+  },
+)
+
 export const addCategoryThunk = createAsyncThunk<boolean, { name: string }>(
-  'categories/addCategory',
+  "categories/addCategory",
   async ({ name }, { rejectWithValue, dispatch }) => {
     try {
-      const success = await addCategory(name);
+      const success = await addCategory(name)
       if (success) {
-        dispatch(fetchCategoriesThunk()); // ריענון רשימה
+        dispatch(fetchCategoriesThunk())
       }
-      return success;
+      return success
     } catch (err: any) {
-      return rejectWithValue(err.message);
+      return rejectWithValue(err.message)
     }
-  }
-);
+  },
+)
 
-// ADD SUBCATEGORY
 export const addSubCategoryThunk = createAsyncThunk<boolean, { name: string; categoryId: string }>(
-  'subcategories/addSubCategory',
+  "subcategories/addSubCategory",
   async ({ name, categoryId }, { rejectWithValue, dispatch }) => {
     try {
-      const success = await addSubCategory(name, categoryId);
+      const success = await addSubCategory(name, categoryId)
       if (success) {
-        dispatch(fetchSubCategoriesThunk()); // ריענון רשימה
+        dispatch(fetchSubCategoriesThunk())
       }
-      return success;
+      return success
     } catch (err: any) {
-      return rejectWithValue(err.message);
+      return rejectWithValue(err.message)
     }
-  }
-);
+  },
+)
+
+export const updateCategoryThunk = createAsyncThunk<boolean, { categoryId: string; name: string }>(
+  "categories/updateCategory",
+  async ({ categoryId, name }, { rejectWithValue, dispatch }) => {
+    try {
+      await updateCategory(categoryId, name)
+      dispatch(fetchCategoriesThunk())
+      return true
+    } catch (err: any) {
+      return rejectWithValue(err.message)
+    }
+  },
+)
+
+export const updateSubCategoryThunk = createAsyncThunk<boolean, { subCategoryId: string; name: string }>(
+  "subcategories/updateSubCategory",
+  async ({ subCategoryId, name }, { rejectWithValue, dispatch }) => {
+    try {
+      await updateSubCategory(subCategoryId, name)
+      dispatch(fetchSubCategoriesThunk())
+      return true
+    } catch (err: any) {
+      return rejectWithValue(err.message)
+    }
+  },
+)
+
+export const deleteCategoryThunk = createAsyncThunk<boolean, string>(
+  "categories/deleteCategory",
+  async (categoryId, { rejectWithValue, dispatch }) => {
+    try {
+      await deleteCategory(categoryId)
+      dispatch(fetchCategoriesThunk())
+      dispatch(fetchSubCategoriesThunk())
+      return true
+    } catch (err: any) {
+      return rejectWithValue(err.message)
+    }
+  },
+)
+
+export const deleteSubCategoryThunk = createAsyncThunk<boolean, string>(
+  "subcategories/deleteSubCategory",
+  async (subCategoryId, { rejectWithValue, dispatch }) => {
+    try {
+      await deleteSubCategory(subCategoryId)
+      dispatch(fetchSubCategoriesThunk())
+      return true
+    } catch (err: any) {
+      return rejectWithValue(err.message)
+    }
+  },
+)
 
 const categorySlice = createSlice({
-  name: 'categories',
+  name: "categories",
   initialState,
-  reducers: {},
+  reducers: {
+    clearError: (state) => {
+      state.error = null
+    },
+  },
   extraReducers: (builder) => {
     builder
       .addCase(fetchCategoriesThunk.pending, (state) => {
-        state.loading = true;
-        state.error = null;
+        state.loading = true
+        state.error = null
       })
       .addCase(fetchCategoriesThunk.fulfilled, (state, action: PayloadAction<Category[]>) => {
-        state.loading = false;
-        state.categories = action.payload;
+        state.loading = false
+        state.categories = action.payload
       })
       .addCase(fetchCategoriesThunk.rejected, (state, action) => {
-        state.loading = false;
-        state.error = action.payload as string;
+        state.loading = false
+        state.error = action.payload as string
       })
-
       .addCase(fetchSubCategoriesThunk.pending, (state) => {
-        state.loading = true;
-        state.error = null;
+        state.loading = true
+        state.error = null
       })
       .addCase(fetchSubCategoriesThunk.fulfilled, (state, action: PayloadAction<SubCategory[]>) => {
-        state.loading = false;
-        state.subcategories = action.payload;
+        state.loading = false
+        state.subcategories = action.payload
       })
       .addCase(fetchSubCategoriesThunk.rejected, (state, action) => {
-        state.loading = false;
-        state.error = action.payload as string;
+        state.loading = false
+        state.error = action.payload as string
       })
-
-      .addCase(addCategoryThunk.pending, (state) => {
-        state.loading = true;
-        state.error = null;
-      })
-      .addCase(addCategoryThunk.fulfilled, (state) => {
-        state.loading = false;
-      })
-      .addCase(addCategoryThunk.rejected, (state, action) => {
-        state.loading = false;
-        state.error = action.payload as string;
-      })
-
-      .addCase(addSubCategoryThunk.pending, (state) => {
-        state.loading = true;
-        state.error = null;
-      })
-      .addCase(addSubCategoryThunk.fulfilled, (state) => {
-        state.loading = false;
-      })
-      .addCase(addSubCategoryThunk.rejected, (state, action) => {
-        state.loading = false;
-        state.error = action.payload as string;
-      });
   },
-});
+})
 
-export default categorySlice.reducer;
+export const { clearError } = categorySlice.actions
+export default categorySlice.reducer

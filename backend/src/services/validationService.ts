@@ -9,8 +9,6 @@ export const isValidMongoId = (id: string): boolean => {
  return mongoose.isValidObjectId(id)
 };
 
-
-
 // Throws if category is invalid
 
 export const validateCategoryExists = async (categoryId: string) => {

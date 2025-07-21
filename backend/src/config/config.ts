@@ -1,6 +1,5 @@
 import dotenv from 'dotenv';
 import { OpenAI } from 'openai';
-import { GoogleGenerativeAI } from '@google/generative-ai';
 
 dotenv.config();
 
@@ -25,11 +24,9 @@ const getConfig = (): Config => {
     throw new Error('Missing MONGODB_URI in .env');
   }
 
-  // if (!openaiApiKey) {
-  //   throw new Error('Missing OPENAI_API_KEY in .env');
-  // }
+
   const openai = process.env.OPENAI_API_KEY ? new OpenAI({
-    apiKey: process.env.OPENAI_API_KEY || '',
+    apiKey: process.env.OPENAI_API_KEY ,
   }) : null;
   if (!adminPassword || !adminUsername) {
     throw new Error('Missing Admin values in .env');

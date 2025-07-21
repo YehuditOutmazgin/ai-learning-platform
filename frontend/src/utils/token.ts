@@ -1,60 +1,42 @@
-import { jwtDecode } from 'jwt-decode';
+import { jwtDecode } from "jwt-decode"
 
-type TokenPayload = {
-    userId: string | undefined;
-    name: string;
-    role: string;
-    iat: number;
-    exp: number;
-};
-export const setToken = (token: string) => {
-    localStorage.setItem('token', token);
-};
+interface TokenPayload {
+  userId: string
+  name: string
+  role: string
+  exp: number
+}
 
-export const getToken = () => {
-    return localStorage.getItem('token');
-};
+export const setToken = (token: string): void => {
+  localStorage.setItem("token", token)
+}
 
+export const getToken = (): string | null => {
+  return localStorage.getItem("token")
+}
 
-export const removeToken = () => {
-    localStorage.removeItem('token');
-};
+export const removeToken = (): void => {
+  localStorage.removeItem("token")
+}
 
 export const getUserFromToken = (): TokenPayload | null => {
-    const token = getToken();
-    if (!token) return null;
+  const token = getToken()
+  if (!token) return null
 
-    try {
-        const decoded = jwtDecode<TokenPayload>(token);
-
-        const now = Date.now() / 1000;
-        if (decoded.exp < now) {
-            console.warn('הטוקן פג תוקף');
-            removeToken();
-            return null;
-        }
-
-        return decoded;
-    } catch (err) {
-        console.error('שגיאה בפענוח הטוקן:', err);
-        return null;
+  try {
+    const decoded = jwtDecode<TokenPayload>(token)
+    if (decoded.exp * 1000 < Date.now()) {
+      removeToken()
+      return null
     }
-};
-export const isAdmin = (): boolean => {
-    const token = getToken();
-    if (!token) return false;
+    return decoded
+  } catch (error) {
+    removeToken()
+    return null
+  }
+}
 
-    try {
-        const now = Date.now() / 1000;
-
-        const decoded = jwtDecode<TokenPayload>(token);
-        if (decoded.exp < now) {
-            console.warn('הטוקן פג תוקף');
-            removeToken();
-            return false;
-        }
-        return decoded.role === 'admin';
-    } catch (e) {
-        return false;
-    }
-};
+export const isTokenValid = (): boolean => {
+  const userData = getUserFromToken()
+  return userData !== null
+}

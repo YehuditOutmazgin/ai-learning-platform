@@ -1,43 +1,5 @@
-// // import express from 'express';
-// // import { createUser, getUsers } from '../controllers/userController';
-// // import { validateCreateUser } from '../validators/userValidator';
-// // import validateRequest from '../middlewares/validateRequest';
-// // import { authMiddleware } from '../middlewares/authMiddleware';
-// // import { requireRole } from '../middlewares/roleMiddleware';
-// // import { loginUser } from '../controllers/authController';
-
-// // const router = express.Router();
-
-// // router.post('/signup', validateCreateUser, validateRequest, createUser);
-// // router.post('/login', loginUser);
-
-// // // 👇 רק אדמין יכול לראות את כל המשתמשים
-// // router.get('/', authMiddleware, requireRole(['admin']), getUsers);
-
-// // export default router;
-
-
-// import express from 'express';
-// import { createUser, getUsers } from '../controllers/userController';
-// import { validateCreateUser } from '../validators/userValidator';
-// import validateRequest from '../middlewares/validateRequest';
-// import { authMiddleware } from '../middlewares/authMiddleware';
-// import { requireRole } from '../middlewares/roleMiddleware';
-// import { loginUser } from '../controllers/authController';
-
-// const router = express.Router();
-
-// router.post('/', validateCreateUser, validateRequest, createUser);
-// router.post('/login', loginUser);
-
-// // 👇 רק אדמין יכול לראות את כל המשתמשים
-// router.get('/', authMiddleware, requireRole(['admin']), getUsers);
-
-// export default router;
-// src/routes/userRoutes.ts
-
 import express from 'express';
-import { createUser, getUsers } from '../controllers/userController';
+import { createUser, deleteUser, getUsers, updateUser } from '../controllers/userController';
 import { validateCreateUser } from '../validators/userValidator';
 import validateRequest from '../middlewares/validateRequest';
 import { authMiddleware } from '../middlewares/authMiddleware';
@@ -85,5 +47,55 @@ router.get('/', authMiddleware, requireRole(['admin']), getUsers);
  *         description: User created
  */
 router.post('/', validateCreateUser, validateRequest, createUser);
+/**
+ * @swagger
+ * /api/users/{userId}:
+ *   put:
+ *     summary: Update a user (admin only)
+ *     tags: [Users]
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: userId
+ *         required: true
+ *         schema:
+ *           type: string
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               name:
+ *                 type: string
+ *               phone:
+ *                 type: string
+ *     responses:
+ *       200:
+ *         description: User updated
+ */
+router.put('/:userId', authMiddleware, requireRole(['admin']), updateUser);
+
+/**
+ * @swagger
+ * /api/users/{userId}:
+ *   delete:
+ *     summary: Delete a user (admin only)
+ *     tags: [Users]
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: userId
+ *         required: true
+ *         schema:
+ *           type: string
+ *     responses:
+ *       200:
+ *         description: User deleted
+ */
+router.delete('/:userId', authMiddleware, requireRole(['admin']), deleteUser);
 
 export default router;

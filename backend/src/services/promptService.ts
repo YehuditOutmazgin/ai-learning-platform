@@ -1,10 +1,11 @@
-import mongoose from 'mongoose';
 import Prompt from '../models/Prompt';
 import User from '../models/User';
 import Category from '../models/Category';
 import SubCategory from '../models/SubCategory';
 import { AppError } from '../utils/AppError';
 import config from '../config/config';
+import { isValidMongoId } from './validationService';
+import { Types } from 'mongoose';
 
 export const createPrompt = async (
     userId: string,
@@ -17,9 +18,9 @@ export const createPrompt = async (
             throw new AppError('Missing required fields', 400);
 
         if (
-            !mongoose.isValidObjectId(userId) ||
-            !mongoose.isValidObjectId(categoryId) ||
-            !mongoose.isValidObjectId(subCategoryId)
+            !isValidMongoId(userId) ||
+            !isValidMongoId(categoryId) ||
+            !isValidMongoId(subCategoryId)
         ) {
             throw new AppError('One or more IDs are invalid', 400);
         }
@@ -41,7 +42,7 @@ export const createPrompt = async (
             throw new AppError('Sub-category does not match the category or does not exist', 400);
         }
 
-        const aiResponse = await openAiGenerate(trimmedPrompt, category.name, subCategory.name);
+        const aiResponse = await aiGenerate(trimmedPrompt, category.name, subCategory.name);
 
         const newPrompt = await Prompt.create({
             userId,
@@ -58,10 +59,18 @@ export const createPrompt = async (
         throw new AppError('Failed to create prompt', 500);
     }
 };
-
+const aiGenerate = async (
+    promptText: string,
+    categoryName: string,
+    subCategoryName: string
+): Promise<string> => {
+    if (config.openAI)
+        return await openAiGenerate(promptText, categoryName, subCategoryName);
+    return await mockGenerate(promptText, categoryName, subCategoryName);
+}
 export const getUserPrompts = async (userId: string) => {
     try {
-        if (!mongoose.isValidObjectId(userId)) {
+        if (!isValidMongoId(userId)) {
             throw new AppError('Invalid user ID', 400);
         }
 
@@ -136,4 +145,64 @@ If, and only if, the question is completely outside the scope of this topic, res
 };
 
 
+// export const updatePrompt = async (
+//     promptId: string,
+//     categoryId: string,
+//     subcategoryId: string,
+//     prompt: string,
+// ) => {
+//     try {
+//         if (
+//             !isValidMongoId(promptId) ||
+//             !isValidMongoId(categoryId) ||
+//             !isValidMongoId(subcategoryId) ||
+//             !prompt.trim()
+//         ) {
+//             throw new AppError('Invalid input for prompt update', 400);
+//         }
 
+//         const existingPrompt = await Prompt.findById(promptId);
+//         if (!existingPrompt) {
+//             throw new AppError('Prompt not found', 404);
+//         }
+
+//         const categoryExists = await Category.findById(categoryId);
+//         const subCategoryExists = await SubCategory.findById(subcategoryId);
+//         if (!categoryExists || !subCategoryExists) {
+//             throw new AppError('Category or SubCategory not found', 404);
+//         }
+
+//         existingPrompt.categoryId = new Types.ObjectId(categoryId);;
+//         existingPrompt.subCategoryId = new Types.ObjectId(subcategoryId);
+//         existingPrompt.prompt = prompt.trim();
+//         const newPrompt = aiGenerate(prompt, categoryExists.name, subCategoryExists.name);
+//         existingPrompt.response = (await newPrompt).trim();
+
+//         await existingPrompt.save();
+
+//         return existingPrompt;
+//     } catch (err) {
+//         console.error('Error in updatePrompt:', err);
+//         if (err instanceof AppError) throw err;
+//         throw new AppError('Failed to update prompt', 500);
+//     }
+// };
+
+export const deletePrompt = async (promptId: string) => {
+    try {
+        if (!isValidMongoId(promptId)) {
+            throw new AppError('Invalid prompt ID', 400);
+        }
+
+        const deletedPrompt = await Prompt.findByIdAndDelete(promptId);
+        if (!deletedPrompt) {
+            throw new AppError('Prompt not found', 404);
+        }
+
+        return { message: 'Prompt deleted successfully' };
+    } catch (err) {
+        console.error('Error in deletePrompt:', err);
+        if (err instanceof AppError) throw err;
+        throw new AppError('Failed to delete prompt', 500);
+    }
+};

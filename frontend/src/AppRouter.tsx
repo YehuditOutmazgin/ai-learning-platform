@@ -1,35 +1,33 @@
-import React from 'react';
-import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
-import Login from './components/auth/Login';
-import SignUp from './components/auth/SignUp';
-import UserDashboard from './components/user/UserDashboard';
-import AdminDashboard from './components/admin/AdminDashboard';
-import { getUserFromToken } from './utils/token';
-import { useSelector } from 'react-redux';
-import { RootState } from './redux/store';
-import ProtectedRoute from './components/shared/ProtectedRoutes';
+import type React from "react"
+import { BrowserRouter as Router, Routes, Route, Navigate } from "react-router-dom"
+import { useSelector } from "react-redux"
+import type { RootState } from "./redux/store"
+import AuthPage from "./pages/Auth/AuthPage"
+import UserDashboard from "./pages/User/UserDashboard"
+import AdminDashboard from "./pages/Admin/AdminDashboard"
+import ProtectedRoute from "./components/Common/ProtectedRoute"
 
-const AppRouter = () => {
-  const { role, isAuthenticated } = useSelector((state: RootState) => state.auth);
+const AppRouter: React.FC = () => {
+  const { isAuthenticated, role } = useSelector((state: RootState) => state.auth)
 
   return (
-    <Router>
-      <Routes>
-        <Route path="/" element={<Navigate to="/login" />} />
+    <Routes>
+      <Route path="/auth" element={<AuthPage />} />
 
-        <Route path="/login" element={<Login />} />
+      <Route element={<ProtectedRoute requiredRole="user" />}>
+        <Route path="/user" element={<UserDashboard />} />
+      </Route>
 
-        <Route path="/signup" element={<SignUp />} />
+      <Route element={<ProtectedRoute requiredRole="admin" />}>
+        <Route path="/admin" element={<AdminDashboard />} />
+      </Route>
+      <Route
+        path="/"
+        element={isAuthenticated ? <Navigate to={role === "admin" ? "/admin" : "/user"} /> : <Navigate to="/auth" />}
+      />
 
-        <Route element={<ProtectedRoute requiredRole="user" />}>
-          <Route path="/user-dashboard" element={<UserDashboard />} />
-        </Route>
-        <Route element={<ProtectedRoute requiredRole="admin" />}>           <Route path="/admin-dashboard" element={<AdminDashboard />} />
-        </Route>
-        <Route path="*" element={<Navigate to="/" />} />
-      </Routes>
-    </Router>
+      <Route path="*" element={<Navigate to="/" />} />
+    </Routes>
   );
 };
-
-export default AppRouter;
+export default AppRouter

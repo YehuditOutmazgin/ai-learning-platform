@@ -24,7 +24,7 @@ const Header: React.FC = () => {
         <div className="header-user-details">
           <span className="header-welcome-text">Welcome,</span>
           <span className="header-user-name">{name}</span>
-          <span className={`badge ${role === "admin" ? "badge-admin" : "badge-user"}`}>{role}</span>
+          {role === "admin"? ( <span className="badge badge-admin">manager</span>):(<></>)}
         </div>
 
         <button onClick={handleLogout} className="btn btn-secondary text-medium">

@@ -30,23 +30,7 @@ export const getUsersPrompts = async (req: Request, res: Response, next: NextFun
   }
 };
 
-// export const updatePrompt = async (req: Request, res: Response, next: NextFunction) => {
-//   try {
-//     const { categoryId, subCategoryId, prompt } = req.body;
-//     const { promptId } = req.params;
 
-//     const updatedPrompt = await promptService.updatePrompt(
-//       promptId,
-//       categoryId,
-//       subCategoryId,
-//       prompt
-//     );
-
-//     res.status(200).json(successResponse('Prompt updated successfully', updatedPrompt));
-//   } catch (error) {
-//     next(error);
-//   }
-// };
 
 export const deletePrompt = async (req: Request, res: Response, next: NextFunction) => {
   try {

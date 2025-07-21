@@ -174,22 +174,6 @@ export const getAllUsersPrompts = async () => {
   }
 }
 
-// export const updatePrompt = async (
-//   promptId: string,
-//   updateData: {
-//     categoryId: string
-//     subCategoryId: string
-//     prompt: string
-//   },
-// ) => {
-//   try {
-//     const res = await api.put(`/prompts/${promptId}`, updateData)
-//     return res.data.data
-//   } catch (e: any) {
-//     if (e?.response?.data?.message) throw new Error(e.response.data.message)
-//     throw new Error("Error updating conversation: " + (e.message || e))
-//   }
-// }
 
 export const deletePrompt = async (promptId: string) => {
   try {

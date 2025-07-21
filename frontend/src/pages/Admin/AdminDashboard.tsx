@@ -23,7 +23,7 @@ const AdminDashboard: React.FC = () => {
   const { categories, subcategories } = useSelector((state: RootState) => state.categories)
   const { prompts } = useSelector((state: RootState) => state.prompts)
 
-  const [activeTab, setActiveTab] = useState<"overview" | "users" | "categories" | "conversations">("overview")
+  const [activeTab, setActiveTab] = useState<"users" | "categories" | "conversations">("users")
   const [loading, setLoading] = useState(true)
 
   useEffect(() => {
@@ -53,46 +53,7 @@ const AdminDashboard: React.FC = () => {
         return <CategoryManagement />
       case "conversations":
         return <ConversationManagement />
-      default:
-        return (
-          <div>
-            <h2 className="admin-overview-title">Dashboard Overview</h2>
-
-            <div className="stats-grid">
-              <div className="stat-card">
-                <div className="stat-number">{users.length}</div>
-                <div className="stat-label">Total Users</div>
-              </div>
-
-              <div className="stat-card">
-                <div className="stat-number">{categories.length}</div>
-                <div className="stat-label">Categories</div>
-              </div>
-
-              <div className="stat-card">
-                <div className="stat-number">{subcategories.length}</div>
-                <div className="stat-label">Subcategories</div>
-              </div>
-
-              <div className="stat-card">
-                <div className="stat-number">{prompts.length}</div>
-                <div className="stat-label">Total Conversations</div>
-              </div>
-            </div>
-
-            {/* <div className="card admin-activity-card">
-              <h3>Recent Activity</h3>
-              <div className="admin-activity-list">
-                <p>
-                  • {prompts.filter((p) => new Date(p.createdAt) > new Date(Date.now() - 24 * 60 * 60 * 1000)).length}{" "}
-                  conversations in the last 24 hours
-                </p>
-                <p>• Most active category: {categories.length > 0 ? categories[0].name : "N/A"}</p>
-                <p>• Platform is running smoothly</p>
-              </div>
-            </div> */}
-          </div>
-        )
+      default: <UserManagement />
     }
   }
 
@@ -100,12 +61,6 @@ const AdminDashboard: React.FC = () => {
     <Layout>
       <div className="width-full">
         <div className="tabs">
-          <button
-            className={`tab ${activeTab === "overview" ? "active" : ""}`}
-            onClick={() => setActiveTab("overview")}
-          >
-            Overview
-          </button>
           <button className={`tab ${activeTab === "users" ? "active" : ""}`} onClick={() => setActiveTab("users")}>
             Users
           </button>

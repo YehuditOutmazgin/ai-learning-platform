@@ -7,7 +7,7 @@ export const validateCreateUser = [
 
     body('phone')
         .notEmpty().withMessage('Phone is required')
-        // .isMobilePhone()
         .isLength({ min: 9, max: 10 })
+        .isNumeric()
         .withMessage('Phone must be valid'),
 ];

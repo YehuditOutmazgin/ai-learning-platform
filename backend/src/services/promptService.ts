@@ -145,48 +145,7 @@ If, and only if, the question is completely outside the scope of this topic, res
 };
 
 
-// export const updatePrompt = async (
-//     promptId: string,
-//     categoryId: string,
-//     subcategoryId: string,
-//     prompt: string,
-// ) => {
-//     try {
-//         if (
-//             !isValidMongoId(promptId) ||
-//             !isValidMongoId(categoryId) ||
-//             !isValidMongoId(subcategoryId) ||
-//             !prompt.trim()
-//         ) {
-//             throw new AppError('Invalid input for prompt update', 400);
-//         }
 
-//         const existingPrompt = await Prompt.findById(promptId);
-//         if (!existingPrompt) {
-//             throw new AppError('Prompt not found', 404);
-//         }
-
-//         const categoryExists = await Category.findById(categoryId);
-//         const subCategoryExists = await SubCategory.findById(subcategoryId);
-//         if (!categoryExists || !subCategoryExists) {
-//             throw new AppError('Category or SubCategory not found', 404);
-//         }
-
-//         existingPrompt.categoryId = new Types.ObjectId(categoryId);;
-//         existingPrompt.subCategoryId = new Types.ObjectId(subcategoryId);
-//         existingPrompt.prompt = prompt.trim();
-//         const newPrompt = aiGenerate(prompt, categoryExists.name, subCategoryExists.name);
-//         existingPrompt.response = (await newPrompt).trim();
-
-//         await existingPrompt.save();
-
-//         return existingPrompt;
-//     } catch (err) {
-//         console.error('Error in updatePrompt:', err);
-//         if (err instanceof AppError) throw err;
-//         throw new AppError('Failed to update prompt', 500);
-//     }
-// };
 
 export const deletePrompt = async (promptId: string) => {
     try {

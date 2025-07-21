@@ -5,29 +5,37 @@ import type { RootState } from "./redux/store"
 import AuthPage from "./pages/Auth/AuthPage"
 import UserDashboard from "./pages/User/UserDashboard"
 import AdminDashboard from "./pages/Admin/AdminDashboard"
-import ProtectedRoute from "./components/Common/ProtectedRoute"
 
 const AppRouter: React.FC = () => {
   const { isAuthenticated, role } = useSelector((state: RootState) => state.auth)
 
   return (
-    <Routes>
-      <Route path="/auth" element={<AuthPage />} />
+    <Router>
+      <Routes>
+        <Route
+          path="/auth"
+          element={!isAuthenticated ? <AuthPage /> : <Navigate to={role === "admin" ? "/admin" : "/user"} />}
+        />
 
-      <Route element={<ProtectedRoute requiredRole="user" />}>
-        <Route path="/user" element={<UserDashboard />} />
-      </Route>
+        <Route
+          path="/user"
+          element={isAuthenticated && role === "user" ? <UserDashboard /> : <Navigate to="/auth" />}
+        />
 
-      <Route element={<ProtectedRoute requiredRole="admin" />}>
-        <Route path="/admin" element={<AdminDashboard />} />
-      </Route>
-      <Route
-        path="/"
-        element={isAuthenticated ? <Navigate to={role === "admin" ? "/admin" : "/user"} /> : <Navigate to="/auth" />}
-      />
+        <Route
+          path="/admin"
+          element={isAuthenticated && role === "admin" ? <AdminDashboard /> : <Navigate to="/auth" />}
+        />
 
-      <Route path="*" element={<Navigate to="/" />} />
-    </Routes>
-  );
-};
+        <Route
+          path="/"
+          element={isAuthenticated ? <Navigate to={role === "admin" ? "/admin" : "/user"} /> : <Navigate to="/auth" />}
+        />
+
+        <Route path="*" element={<Navigate to="/" />} />
+      </Routes>
+    </Router>
+  )
+}
+
 export default AppRouter

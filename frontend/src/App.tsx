@@ -7,6 +7,7 @@ import "./styles/globals.css"
 const App: React.FC = () => {
   return (
     <Provider store={store}>
+      
       <AppRouter />
     </Provider>
   )
